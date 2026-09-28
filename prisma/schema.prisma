@@ -1,0 +1,73 @@
+generator client {
+    provider = "prisma-client"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum TenureStatus {
+    TENURED
+    TENURE_TRACK
+    FIXED_TERM
+}
+
+enum SpaceType{
+    OFFICE
+    CUBICLE
+}
+
+enum FacultyRank {
+    FULL
+    ASSOCIATE
+    ASSISTANT
+    INSTRUCTIONAL_FULL
+    INSTRUCTIONAL_ASSOCIATE
+    INSTRUCTIONAL_ASSISTANT
+    SENIOR_LECTURER
+    LECTURER_INSTRUCTOR
+    VISITING_INSTRUCTIONAL_ASSISTANT
+    VISITING_LECTURER
+}
+
+model Faculty {
+    id              Int     @id @default(autoincrement())
+    firstName       String
+    lastName        String
+    email           String  @unique
+    tenureStatus    TenureStatus
+    facultyRank     FacultyRank
+    createdAt       DateTime    @default(now())
+    updatedAt       DateTime    @updatedAt
+    departmentId    Int
+    department      Department @relation(fields: [departmentId], references: [id])
+    allocations     Allocation[]
+}
+
+model Office {
+    id          Int @id @default(autoincrement())
+    building    String
+    roomNumber  String
+    floor       Int
+    hasWindow   Boolean
+    spaceType   SpaceType
+    allocations Allocation[]
+
+}
+
+model Department {
+    id                  Int @id @default(autoincrement())
+    name                String @unique
+    building            String
+    facultyMembers      Faculty[]
+}
+
+model Allocation {
+    id              Int @id @default(autoincrement())
+    facultyId       Int
+    officeId        Int
+    assignedAt      DateTime @default(now())
+    endedAt         DateTime?
+    faculty         Faculty @relation(fields: [facultyId], references: [id])
+    office          Office @relation(fields: [officeId], references: [id])
+}
