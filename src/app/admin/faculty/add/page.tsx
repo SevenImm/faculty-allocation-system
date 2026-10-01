@@ -22,9 +22,22 @@ export default async function AddFacultyPage() {
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
     const email = formData.get("email") as string;
-    const tenureStatus = formData.get("tenureStatus") as string;
-    const facultyRank = formData.get("facultyRank") as string;
-    const departmentId = Number(formData.get("departmentId"));
+    const tenureStatus = formData.get("tenureStatus") as
+      | "TENURED"
+      | "TENURE_TRACK"
+      | "FIXED_TERM";
+    const facultyRank = formData.get("facultyRank") as
+      | "FULL"
+      | "ASSOCIATE"
+      | "ASSISTANT"
+      | "INSTRUCTIONAL_FULL"
+      | "INSTRUCTIONAL_ASSOCIATE"
+      | "INSTRUCTIONAL_ASSISTANT"
+      | "SENIOR_LECTURER"
+      | "LECTURER_INSTRUCTOR"
+      | "VISITING_INSTRUCTIONAL_ASSISTANT"
+      | "VISITING_LECTURER";
+      const departmentId = Number(formData.get("departmentId"));
 
     // Create the Faculty record in PostgreSQL.
     await db.orm.public.Faculty.create({

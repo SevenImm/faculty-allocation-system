@@ -9,8 +9,9 @@ export default function AddOfficePage() {
     const roomNumber = formData.get("roomNumber") as string;
     const floor = Number(formData.get("floor"));
     const hasWindow = formData.get("hasWindow") === "true";
-    const spaceType = formData.get("spaceType") as string;
-
+    const spaceType = formData.get("spaceType") as
+      | "OFFICE"
+      | "CUBICLE";
     await db.orm.public.Office.create({
       building,
       roomNumber,
