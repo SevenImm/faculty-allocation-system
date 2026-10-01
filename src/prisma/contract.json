@@ -128,7 +128,7 @@
           "Department": {
             "fields": {
               "building": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -554,7 +554,7 @@
                 "building": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -797,7 +797,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "758c92511671a68a26c4b6541915e8cd1f59e85fda5c8eab605b5ca3668359aa"
+    "storageHash": "2f3e52404fe3030b620a5ea8bb9afdc9bf405b4b449f93a6348d71390a6fca08"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

@@ -1,3 +1,15 @@
+// Prisma schema for the Faculty Allocation System.
+//
+// Main relationships:
+//
+// Department 1 ──── many Faculty
+//
+// Faculty    1 ──── many Allocation
+// Office     1 ──── many Allocation
+//
+// Allocation acts as the connection between a faculty member
+// and an office while also preserving assignment history.
+
 generator client {
     provider = "prisma-client"
 }
@@ -6,17 +18,26 @@ datasource db {
     provider = "postgresql"
 }
 
+
+// Employment/tenure categories used when classifying faculty.
+// These values will later contribute to office recommendations.
 enum TenureStatus {
     TENURED
     TENURE_TRACK
     FIXED_TERM
 }
 
-enum SpaceType{
+
+// Physical spaces are currently classified as either a traditional
+// office or a cubicle. Space type will later affect recommendations.
+enum SpaceType {
     OFFICE
     CUBICLE
 }
 
+
+// Faculty hierarchy supplied for the allocation system.
+// Rank will later be used as one factor in office recommendations.
 enum FacultyRank {
     FULL
     ASSOCIATE
@@ -30,44 +51,81 @@ enum FacultyRank {
     VISITING_LECTURER
 }
 
+
+// Represents an individual faculty member.
+//
+// departmentId is the foreign key connecting Faculty to Department.
+// A faculty member can have multiple Allocation records over time,
+// allowing the system to preserve their office-assignment history.
 model Faculty {
-    id              Int     @id @default(autoincrement())
+    id              Int          @id @default(autoincrement())
     firstName       String
     lastName        String
-    email           String  @unique
+    email           String       @unique
     tenureStatus    TenureStatus
     facultyRank     FacultyRank
-    createdAt       DateTime    @default(now())
-    updatedAt       DateTime    @updatedAt
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+
     departmentId    Int
-    department      Department @relation(fields: [departmentId], references: [id])
+    department      Department   @relation(fields: [departmentId], references: [id])
+
     allocations     Allocation[]
 }
 
+
+// Represents a physical assignable space.
+//
+// Availability is intentionally NOT stored here as an isAvailable Boolean.
+// Instead, an office is occupied when it has an Allocation where
+// endedAt is null. This prevents two separate sources of truth.
+//
+// hasWindow and spaceType will later be used by the recommendation system.
 model Office {
-    id          Int @id @default(autoincrement())
-    building    String
-    roomNumber  String
-    floor       Int
-    hasWindow   Boolean
-    spaceType   SpaceType
-    allocations Allocation[]
+    id              Int          @id @default(autoincrement())
+    building        String
+    roomNumber      String
+    floor           Int
+    hasWindow       Boolean
+    spaceType       SpaceType
 
+    allocations     Allocation[]
 }
 
+
+// Represents an academic department.
+//
+// building is currently nullable because the official department-to-building
+// assignments have not yet been provided. Once confirmed, this field can
+// participate in the office recommendation system.
+//
+// One Department can contain many Faculty members.
 model Department {
-    id                  Int @id @default(autoincrement())
-    name                String @unique
-    building            String
-    facultyMembers      Faculty[]
+    id              Int          @id @default(autoincrement())
+    name            String       @unique
+    building        String?
+
+    facultyMembers  Faculty[]
 }
 
+
+// Represents the assignment of one faculty member to one office.
+//
+// assignedAt = when the assignment began.
+// endedAt = null means the allocation is CURRENTLY ACTIVE.
+// endedAt = timestamp means the allocation has ended.
+//
+// Records should normally be ended rather than deleted so that historical
+// faculty-office assignments remain available for future reporting.
 model Allocation {
-    id              Int @id @default(autoincrement())
+    id              Int          @id @default(autoincrement())
+
     facultyId       Int
     officeId        Int
-    assignedAt      DateTime @default(now())
+
+    assignedAt      DateTime     @default(now())
     endedAt         DateTime?
-    faculty         Faculty @relation(fields: [facultyId], references: [id])
-    office          Office @relation(fields: [officeId], references: [id])
+
+    faculty         Faculty      @relation(fields: [facultyId], references: [id])
+    office          Office       @relation(fields: [officeId], references: [id])
 }
