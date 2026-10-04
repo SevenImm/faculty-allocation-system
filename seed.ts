@@ -1,7 +1,7 @@
 /**
  * Initial database seed.
  *
- * This script inserts the four university academic departments currently
+ * This script inserts the COAS academic units (6 departments and 2 schools)
  * required by the Faculty Allocation System.
  *
  * Run from the project root with:
@@ -18,24 +18,16 @@
 import { db } from "./src/prisma/db";
 
 async function main() {
-  await db.orm.public.Department.createAll(
+ await db.orm.public.Department.createAll(
     [
-      {
-        name: "A. R. Sanchez, Jr. School of Business",
-        building: null,
-      },
-      {
-        name: "College of Arts and Sciences",
-        building: null,
-      },
-      {
-        name: "College of Education",
-        building: null,
-      },
-      {
-        name: "College of Nursing and Health Sciences",
-        building: null,
-      },
+      { name: "Department of Biology and Chemistry", building: null },
+      { name: "Department of Fine and Performing Arts", building: null },
+      { name: "Department of Humanities", building: null },
+      { name: "Department of Mathematics and Physics", building: null },
+      { name: "Department of Psychology and Communication", building: null },
+      { name: "Department of Social Sciences", building: null },
+      { name: "School of Engineering", building: null },
+      { name: "School of First Year Experiences", building: null },
     ],
     { onConflict: "skip" }
   );
