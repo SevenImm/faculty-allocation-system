@@ -23,7 +23,7 @@ export default async function AdminPage() {
 
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold">Faculty Allocation System</h1>
 
       {/* Main administrative actions */}
       <div className="mt-6 flex gap-4">
@@ -87,6 +87,8 @@ export default async function AdminPage() {
                 <p>Rank: {member.facultyRank}</p>
 
                 <p>Tenure: {member.tenureStatus}</p>
+
+                <p>Other Notes: {member.otherNotes || "None"}</p>
 
                 <p>
                   Office:{" "}

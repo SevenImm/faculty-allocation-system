@@ -22,6 +22,7 @@ export default async function AddFacultyPage() {
     const firstName = formData.get("firstName") as string;
     const lastName = formData.get("lastName") as string;
     const email = formData.get("email") as string;
+    const otherNotes = formData.get("otherNotes") as string;
     const tenureStatus = formData.get("tenureStatus") as
       | "TENURED"
       | "TENURE_TRACK"
@@ -46,6 +47,7 @@ export default async function AddFacultyPage() {
       email,
       tenureStatus,
       facultyRank,
+      otherNotes,
       departmentId,
     });
 
@@ -148,6 +150,12 @@ export default async function AddFacultyPage() {
             Visiting Lecturer
           </option>
         </select>
+          <textarea
+          name="otherNotes"
+          placeholder="Other Notes"
+          rows={4}
+          className="border p-2"
+          />
 
         <button
           type="submit"

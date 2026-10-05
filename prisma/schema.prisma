@@ -35,6 +35,14 @@ enum SpaceType {
     CUBICLE
 }
 
+// Office spaces can be classified accordingly depending on their availability.
+// Office availability will later affect future allocation recommendations.
+enum OfficeStatus {
+    AVAILABLE
+    RESERVED
+    UNAVAILABLE
+}
+
 
 // Faculty hierarchy supplied for the allocation system.
 // Rank will later be used as one factor in office recommendations.
@@ -64,6 +72,7 @@ model Faculty {
     email           String       @unique
     tenureStatus    TenureStatus
     facultyRank     FacultyRank
+    otherNotes      String?
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
 
@@ -88,6 +97,7 @@ model Office {
     floor           Int
     hasWindow       Boolean
     spaceType       SpaceType
+    status          OfficeStatus    @default(AVAILABLE)
 
     allocations     Allocation[]
 }

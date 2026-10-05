@@ -11,10 +11,30 @@
 
 import Link from "next/link";
 import { db } from "@/prisma/db";
+import { redirect } from "next/navigation";
 
 export default async function OfficesPage() {
   // Retrieve all physical spaces from PostgreSQL.
   const offices = await db.orm.public.Office.all();
+
+  async function updateOfficeStatus(formData: FormData) {
+  "use server";
+
+  const officeId = Number(formData.get("officeId"));
+
+  const status = formData.get("status") as
+    | "AVAILABLE"
+    | "RESERVED"
+    | "UNAVAILABLE";
+
+  await db.orm.public.Office
+    .where({ id: officeId })
+    .update({
+      status,
+    });
+
+  redirect("/admin/offices");
+}
 
   return (
     <main className="p-8">
@@ -52,6 +72,36 @@ export default async function OfficesPage() {
               <p>
                 Space Type: {office.spaceType}
               </p>
+
+              <p>
+                Status: {office.status}
+              </p>
+
+              <form action={updateOfficeStatus} className="mt-3 flex gap-2">
+        <input
+          type="hidden"
+          name="officeId"
+          value={office.id}
+  />
+
+        <select
+          name="status"
+          defaultValue={office.status}
+          className="border p-2"
+  >
+        <option value="AVAILABLE">Available</option>
+        <option value="RESERVED">Reserved</option>
+        <option value="UNAVAILABLE">Unavailable</option>
+      </select>
+
+      <button
+          type="submit"
+          className="border p-2 font-semibold"
+  >
+    Update Status
+      </button>
+    </form>
+
             </div>
           ))}
         </div>

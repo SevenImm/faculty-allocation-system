@@ -239,6 +239,13 @@
                   "kind": "scalar"
                 }
               },
+              "otherNotes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "tenureStatus": {
                 "nullable": false,
                 "type": {
@@ -316,6 +323,9 @@
                 "lastName": {
                   "column": "lastName"
                 },
+                "otherNotes": {
+                  "column": "otherNotes"
+                },
                 "tenureStatus": {
                   "column": "tenureStatus"
                 },
@@ -373,6 +383,16 @@
                     "typeName": "SpaceType"
                   }
                 }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/enum@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "typeName": "OfficeStatus"
+                  }
+                }
               }
             },
             "relations": {
@@ -411,6 +431,9 @@
                 },
                 "spaceType": {
                   "column": "spaceType"
+                },
+                "status": {
+                  "column": "status"
                 }
               },
               "namespaceId": "public",
@@ -441,6 +464,15 @@
                 "VISITING_LECTURER"
               ],
               "typeName": "FacultyRank"
+            },
+            "OfficeStatus": {
+              "kind": "postgres-enum",
+              "members": [
+                "AVAILABLE",
+                "RESERVED",
+                "UNAVAILABLE"
+              ],
+              "typeName": "OfficeStatus"
             },
             "SpaceType": {
               "kind": "postgres-enum",
@@ -645,6 +677,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "otherNotes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "tenureStatus": {
                   "codecId": "pg/enum@1",
                   "nativeType": "TenureStatus",
@@ -748,6 +785,24 @@
                     "namespaceId": "public",
                     "plane": "storage"
                   }
+                },
+                "status": {
+                  "codecId": "pg/enum@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "AVAILABLE"
+                  },
+                  "nativeType": "OfficeStatus",
+                  "nullable": false,
+                  "typeParams": {
+                    "typeName": "OfficeStatus"
+                  },
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "OfficeStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 }
               },
               "foreignKeys": [],
@@ -776,6 +831,14 @@
                 "VISITING_LECTURER"
               ]
             },
+            "OfficeStatus": {
+              "kind": "valueSet",
+              "values": [
+                "AVAILABLE",
+                "RESERVED",
+                "UNAVAILABLE"
+              ]
+            },
             "SpaceType": {
               "kind": "valueSet",
               "values": [
@@ -797,7 +860,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "2f3e52404fe3030b620a5ea8bb9afdc9bf405b4b449f93a6348d71390a6fca08"
+    "storageHash": "7bfbc90e129d77d3c3c7ca887a514510f84e9bd05a525bb0facaf5f7710da86a"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

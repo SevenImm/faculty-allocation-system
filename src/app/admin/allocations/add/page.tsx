@@ -41,13 +41,16 @@ export default async function AddAllocationPage() {
       )
   );
 
-  // Remove offices that already belong to an active allocation.
-  const availableOffices = offices.filter(
-    (office) =>
-      !activeAllocations.some(
-        (allocation) => allocation.officeId === office.id
-      )
-  );
+  // Only show offices that:
+// 1. Have AVAILABLE status
+// 2. Do not already have an active allocation
+const availableOffices = offices.filter(
+  (office) =>
+    office.status === "AVAILABLE" &&
+    !activeAllocations.some(
+      (allocation) => allocation.officeId === office.id
+    )
+);
 
   async function assignOffice(formData: FormData) {
     "use server";
