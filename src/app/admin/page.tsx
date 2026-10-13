@@ -14,12 +14,26 @@
 
 import Link from "next/link";
 import { db } from "@/prisma/db";
+import { redirect } from "next/navigation";
+import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
 
 export default async function AdminPage() {
   // Retrieve the records needed to build the dashboard.
   const faculty = await db.orm.public.Faculty.all();
   const offices = await db.orm.public.Office.all();
   const allocations = await db.orm.public.Allocation.all();
+    async function deleteFaculty(formData: FormData) {
+    "use server";
+
+    const facultyId = Number(formData.get("facultyId"));
+
+    // A faculty member can't be deleted while allocations point to them,
+    // so remove their allocations first, then the faculty record.
+    await db.orm.public.Allocation.where({ facultyId }).delete();
+    await db.orm.public.Faculty.where({ id: facultyId }).delete();
+
+    redirect("/admin");
+  }
 
   return (
     <main className="p-8">
@@ -96,6 +110,11 @@ export default async function AdminPage() {
                     ? `${office.building} ${office.roomNumber}`
                     : "Not Assigned"}
                 </p>
+                                                <form action={deleteFaculty} className="mt-3">
+                  <input type="hidden" name="facultyId" value={member.id} />
+
+                  <ConfirmDeleteButton name={`${member.firstName} ${member.lastName}`} />
+                </form>
               </div>
             );
           })}

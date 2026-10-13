@@ -202,7 +202,7 @@
                 }
               },
               "email": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -346,6 +346,13 @@
                   "kind": "scalar"
                 }
               },
+              "capacity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "floor": {
                 "nullable": false,
                 "type": {
@@ -364,6 +371,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -417,6 +431,9 @@
                 "building": {
                   "column": "building"
                 },
+                "capacity": {
+                  "column": "capacity"
+                },
                 "floor": {
                   "column": "floor"
                 },
@@ -425,6 +442,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
                 },
                 "roomNumber": {
                   "column": "roomNumber"
@@ -642,7 +662,7 @@
                 "email": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "facultyRank": {
                   "codecId": "pg/enum@1",
@@ -748,6 +768,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "capacity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "floor": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -766,6 +795,11 @@
                   },
                   "nativeType": "int4",
                   "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "roomNumber": {
                   "codecId": "pg/text@1",
@@ -860,7 +894,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7bfbc90e129d77d3c3c7ca887a514510f84e9bd05a525bb0facaf5f7710da86a"
+    "storageHash": "d76daa49c4abd4b68d60cc6ba5a75a53d58b9abd48e007947becf8d475543699"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

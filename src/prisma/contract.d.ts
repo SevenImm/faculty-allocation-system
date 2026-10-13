@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'7bfbc90e129d77d3c3c7ca887a514510f84e9bd05a525bb0facaf5f7710da86a'>;
+  StorageHashBase<'d76daa49c4abd4b68d60cc6ba5a75a53d58b9abd48e007947becf8d475543699'>;
 export type ExecutionHash =
   ExecutionHashBase<'054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269'>;
 export type ProfileHash =
@@ -265,7 +265,7 @@ export type FieldOutputTypes = {
     readonly Faculty: {
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly departmentId: CodecTypes['pg/int4@1']['output'];
-      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly facultyRank:
         | 'FULL'
         | 'ASSOCIATE'
@@ -286,9 +286,11 @@ export type FieldOutputTypes = {
     };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['output'];
+      readonly capacity: CodecTypes['pg/int4@1']['output'];
       readonly floor: CodecTypes['pg/int4@1']['output'];
       readonly hasWindow: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly roomNumber: CodecTypes['pg/text@1']['output'];
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
@@ -312,7 +314,7 @@ export type FieldInputTypes = {
     readonly Faculty: {
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly departmentId: CodecTypes['pg/int4@1']['input'];
-      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly facultyRank:
         | 'FULL'
         | 'ASSOCIATE'
@@ -333,9 +335,11 @@ export type FieldInputTypes = {
     };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['input'];
+      readonly capacity: CodecTypes['pg/int4@1']['input'];
       readonly floor: CodecTypes['pg/int4@1']['input'];
       readonly hasWindow: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly roomNumber: CodecTypes['pg/text@1']['input'];
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
@@ -359,7 +363,7 @@ export type StorageColumnTypes = {
     readonly Faculty: {
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly departmentId: CodecTypes['pg/int4@1']['output'];
-      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'] | null;
       readonly facultyRank:
         | 'FULL'
         | 'ASSOCIATE'
@@ -380,9 +384,11 @@ export type StorageColumnTypes = {
     };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['output'];
+      readonly capacity: CodecTypes['pg/int4@1']['output'];
       readonly floor: CodecTypes['pg/int4@1']['output'];
       readonly hasWindow: CodecTypes['pg/bool@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly notes: CodecTypes['pg/text@1']['output'] | null;
       readonly roomNumber: CodecTypes['pg/text@1']['output'];
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
@@ -406,7 +412,7 @@ export type StorageColumnInputTypes = {
     readonly Faculty: {
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly departmentId: CodecTypes['pg/int4@1']['input'];
-      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'] | null;
       readonly facultyRank:
         | 'FULL'
         | 'ASSOCIATE'
@@ -427,9 +433,11 @@ export type StorageColumnInputTypes = {
     };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['input'];
+      readonly capacity: CodecTypes['pg/int4@1']['input'];
       readonly floor: CodecTypes['pg/int4@1']['input'];
       readonly hasWindow: CodecTypes['pg/bool@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly notes: CodecTypes['pg/text@1']['input'] | null;
       readonly roomNumber: CodecTypes['pg/text@1']['input'];
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
@@ -458,7 +466,7 @@ export namespace Models {
   export type public_Faculty = {
     createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
     departmentId: CodecTypes['pg/int4@1']['output'];
-    email: CodecTypes['pg/text@1']['output'];
+    email: CodecTypes['pg/text@1']['output'] | null;
     facultyRank:
       | 'FULL'
       | 'ASSOCIATE'
@@ -482,9 +490,11 @@ export namespace Models {
   };
   export type public_Office = {
     building: CodecTypes['pg/text@1']['output'];
+    capacity: CodecTypes['pg/int4@1']['output'];
     floor: CodecTypes['pg/int4@1']['output'];
     hasWindow: CodecTypes['pg/bool@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
+    notes: CodecTypes['pg/text@1']['output'] | null;
     roomNumber: CodecTypes['pg/text@1']['output'];
     spaceType: 'OFFICE' | 'CUBICLE';
     status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
@@ -635,7 +645,7 @@ type ContractBase = Omit<
                 readonly email: {
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                 };
                 readonly facultyRank: {
                   readonly nativeType: 'FacultyRank';
@@ -711,6 +721,15 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly capacity: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 1>;
+                  };
+                };
                 readonly floor: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
@@ -729,6 +748,11 @@ type ContractBase = Omit<
                     readonly kind: 'function';
                     readonly expression: 'autoincrement()';
                   };
+                };
+                readonly notes: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly roomNumber: {
                   readonly nativeType: 'text';
@@ -934,7 +958,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
               readonly email: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly facultyRank: {
@@ -1026,6 +1050,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly capacity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
               readonly floor: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -1037,6 +1065,10 @@ type ContractBase = Omit<
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly notes: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly roomNumber: {
                 readonly nullable: false;
@@ -1077,9 +1109,11 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly building: { readonly column: 'building' };
+                readonly capacity: { readonly column: 'capacity' };
                 readonly floor: { readonly column: 'floor' };
                 readonly hasWindow: { readonly column: 'hasWindow' };
                 readonly id: { readonly column: 'id' };
+                readonly notes: { readonly column: 'notes' };
                 readonly roomNumber: { readonly column: 'roomNumber' };
                 readonly spaceType: { readonly column: 'spaceType' };
                 readonly status: { readonly column: 'status' };

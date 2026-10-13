@@ -76,6 +76,11 @@ export default async function OfficesPage() {
               <p>
                 Status: {office.status}
               </p>
+              
+                <p>Capacity: {office.capacity}</p>
+
+              {office.notes && <p>Notes: {office.notes}</p>}
+              
 
               <form action={updateOfficeStatus} className="mt-3 flex gap-2">
         <input
