@@ -481,7 +481,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ],
               "typeName": "FacultyRank"
             },
@@ -862,7 +863,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ]
             },
             "OfficeStatus": {
@@ -894,7 +896,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d76daa49c4abd4b68d60cc6ba5a75a53d58b9abd48e007947becf8d475543699"
+    "storageHash": "ed3d5e201101d8b3019b442224f8db83eb344c76d78b05810cc48579ad51d507"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d76daa49c4abd4b68d60cc6ba5a75a53d58b9abd48e007947becf8d475543699'>;
+  StorageHashBase<'ed3d5e201101d8b3019b442224f8db83eb344c76d78b05810cc48579ad51d507'>;
 export type ExecutionHash =
   ExecutionHashBase<'054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269'>;
 export type ProfileHash =
@@ -276,7 +276,8 @@ export type FieldOutputTypes = {
         | 'SENIOR_LECTURER'
         | 'LECTURER_INSTRUCTOR'
         | 'VISITING_INSTRUCTIONAL_ASSISTANT'
-        | 'VISITING_LECTURER';
+        | 'VISITING_LECTURER'
+        | 'VISITING_ASSISTANT';
       readonly firstName: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastName: CodecTypes['pg/text@1']['output'];
@@ -325,7 +326,8 @@ export type FieldInputTypes = {
         | 'SENIOR_LECTURER'
         | 'LECTURER_INSTRUCTOR'
         | 'VISITING_INSTRUCTIONAL_ASSISTANT'
-        | 'VISITING_LECTURER';
+        | 'VISITING_LECTURER'
+        | 'VISITING_ASSISTANT';
       readonly firstName: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastName: CodecTypes['pg/text@1']['input'];
@@ -374,7 +376,8 @@ export type StorageColumnTypes = {
         | 'SENIOR_LECTURER'
         | 'LECTURER_INSTRUCTOR'
         | 'VISITING_INSTRUCTIONAL_ASSISTANT'
-        | 'VISITING_LECTURER';
+        | 'VISITING_LECTURER'
+        | 'VISITING_ASSISTANT';
       readonly firstName: CodecTypes['pg/text@1']['output'];
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly lastName: CodecTypes['pg/text@1']['output'];
@@ -423,7 +426,8 @@ export type StorageColumnInputTypes = {
         | 'SENIOR_LECTURER'
         | 'LECTURER_INSTRUCTOR'
         | 'VISITING_INSTRUCTIONAL_ASSISTANT'
-        | 'VISITING_LECTURER';
+        | 'VISITING_LECTURER'
+        | 'VISITING_ASSISTANT';
       readonly firstName: CodecTypes['pg/text@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly lastName: CodecTypes['pg/text@1']['input'];
@@ -477,7 +481,8 @@ export namespace Models {
       | 'SENIOR_LECTURER'
       | 'LECTURER_INSTRUCTOR'
       | 'VISITING_INSTRUCTIONAL_ASSISTANT'
-      | 'VISITING_LECTURER';
+      | 'VISITING_LECTURER'
+      | 'VISITING_ASSISTANT';
     firstName: CodecTypes['pg/text@1']['output'];
     id: CodecTypes['pg/int4@1']['output'];
     lastName: CodecTypes['pg/text@1']['output'];
@@ -796,6 +801,7 @@ type ContractBase = Omit<
                 'LECTURER_INSTRUCTOR',
                 'VISITING_INSTRUCTIONAL_ASSISTANT',
                 'VISITING_LECTURER',
+                'VISITING_ASSISTANT',
               ];
             };
             readonly OfficeStatus: {
