@@ -142,3 +142,17 @@ model Allocation {
     faculty         Faculty      @relation(fields: [facultyId], references: [id])
     office          Office       @relation(fields: [officeId], references: [id])
 }
+
+// A record of every change made through the admin pages
+// (edits, deletes, status changes, assignments, imports).
+//
+// Rows are only ever added, never edited, so the list is a
+// trustworthy history of what changed and when.
+model ChangeLog {
+    id              Int          @id @default(autoincrement())
+    action          String       // e.g. "Edited faculty"
+    entity          String       // "Faculty", "Office", "Allocation" or "Import"
+    entityId        Int?         // id of the record that changed, if any
+    details         String       // what changed, e.g. "Window: No → Yes"
+    createdAt       DateTime     @default(now())
+}

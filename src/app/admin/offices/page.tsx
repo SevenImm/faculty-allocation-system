@@ -12,6 +12,8 @@
 import Link from "next/link";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { logChange } from "@/lib/history";
+import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
 
 export default async function OfficesPage({
   searchParams,
@@ -76,14 +78,53 @@ export default async function OfficesPage({
     | "RESERVED"
     | "UNAVAILABLE";
 
+  const before = await db.orm.public.Office.where({ id: officeId }).first();
+
   await db.orm.public.Office
     .where({ id: officeId })
     .update({
       status,
     });
 
+  if (before && before.status !== status) {
+    await logChange({
+      action: "Changed office status",
+      entity: "Office",
+      entityId: officeId,
+      details: `${before.building}-${before.roomNumber}: ${before.status} → ${status}`,
+    });
+  }
+
   redirect("/admin/offices");
 }
+
+  // Runs on the server when a "Delete Office" button is pressed.
+  async function deleteOffice(formData: FormData) {
+    "use server";
+
+    const officeId = Number(formData.get("officeId"));
+    const office = await db.orm.public.Office.where({ id: officeId }).first();
+    if (!office) redirect("/admin/offices");
+
+    // An office can't be deleted while allocations point to it,
+    // so remove its allocations (current and past) first.
+    const allocations = await db.orm.public.Allocation.where({ officeId }).all();
+    const occupied = allocations.filter((a) => a.endedAt === null).length;
+
+    await db.orm.public.Allocation.where({ officeId }).deleteAndCount();
+    await db.orm.public.Office.where({ id: officeId }).delete();
+
+    await logChange({
+      action: "Deleted office",
+      entity: "Office",
+      entityId: officeId,
+      details:
+        `${office.building}-${office.roomNumber}` +
+        (occupied > 0 ? ` (${occupied} faculty left without an office)` : ""),
+    });
+
+    redirect("/admin/offices");
+  }
 
   return (
     <main className="p-8">
@@ -222,6 +263,22 @@ export default async function OfficesPage({
   >
     Update Status
       </button>
+
+      <Link
+        href={`/admin/offices/${office.id}/edit`}
+        className="border p-2 font-semibold"
+      >
+        Edit
+      </Link>
+    </form>
+
+    <form action={deleteOffice} className="mt-2">
+      <input type="hidden" name="officeId" value={office.id} />
+      <ConfirmDeleteButton
+        name={`${office.building}-${office.roomNumber}`}
+        label="Delete Office"
+        warning="Anyone assigned to it will be left without an office, and its assignment history is removed."
+      />
     </form>
 
             </div>

@@ -6,6 +6,7 @@
  */
 
 import { parseSpreadsheet, importSpreadsheet, type ImportReport } from "@/lib/spreadsheet";
+import { logChange } from "@/lib/history";
 
 export type ImportResult =
   | { ok: true; report: ImportReport }
@@ -23,6 +24,16 @@ async function run(formData: FormData, apply: boolean): Promise<ImportResult> {
   try {
     const parsed = await parseSpreadsheet(await file.arrayBuffer());
     const report = await importSpreadsheet(parsed, { apply });
+
+    if (apply) {
+      const { offices, faculty, allocations } = report.toAdd;
+      await logChange({
+        action: "Imported spreadsheet",
+        entity: "Import",
+        details: `${file.name}: added ${offices} offices, ${faculty} faculty, ${allocations} assignments`,
+      });
+    }
+
     return { ok: true, report };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : "Could not read the file." };
