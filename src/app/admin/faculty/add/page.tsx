@@ -10,6 +10,7 @@
 
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { logChange } from "@/lib/history";
 
 export default async function AddFacultyPage() {
   // Populate the Department dropdown using actual database records.
@@ -37,11 +38,12 @@ export default async function AddFacultyPage() {
       | "SENIOR_LECTURER"
       | "LECTURER_INSTRUCTOR"
       | "VISITING_INSTRUCTIONAL_ASSISTANT"
-      | "VISITING_LECTURER";
+      | "VISITING_LECTURER"
+      | "VISITING_ASSISTANT";
       const departmentId = Number(formData.get("departmentId"));
 
     // Create the Faculty record in PostgreSQL.
-    await db.orm.public.Faculty.create({
+    const member = await db.orm.public.Faculty.create({
       firstName,
       lastName,
       email,
@@ -49,6 +51,13 @@ export default async function AddFacultyPage() {
       facultyRank,
       otherNotes,
       departmentId,
+    });
+
+    await logChange({
+      action: "Added faculty",
+      entity: "Faculty",
+      entityId: member.id,
+      details: `${firstName} ${lastName}`,
     });
 
     // Return to the dashboard so the new faculty member is visible.
@@ -148,6 +157,9 @@ export default async function AddFacultyPage() {
           </option>
           <option value="VISITING_LECTURER">
             Visiting Lecturer
+          </option>
+           <option value="VISITING_ASSISTANT">
+            Visiting Assistant Professor
           </option>
         </select>
           <textarea

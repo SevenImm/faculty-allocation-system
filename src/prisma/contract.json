@@ -8,6 +8,10 @@
       "model": "Allocation",
       "namespace": "public"
     },
+    "ChangeLog": {
+      "model": "ChangeLog",
+      "namespace": "public"
+    },
     "Department": {
       "model": "Department",
       "namespace": "public"
@@ -125,6 +129,80 @@
               "table": "Allocation"
             }
           },
+          "ChangeLog": {
+            "fields": {
+              "action": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "details": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "entity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "entityId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "action": {
+                  "column": "action"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "details": {
+                  "column": "details"
+                },
+                "entity": {
+                  "column": "entity"
+                },
+                "entityId": {
+                  "column": "entityId"
+                },
+                "id": {
+                  "column": "id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ChangeLog"
+            }
+          },
           "Department": {
             "fields": {
               "building": {
@@ -202,7 +280,7 @@
                 }
               },
               "email": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -346,6 +424,13 @@
                   "kind": "scalar"
                 }
               },
+              "capacity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "floor": {
                 "nullable": false,
                 "type": {
@@ -364,6 +449,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -417,6 +509,9 @@
                 "building": {
                   "column": "building"
                 },
+                "capacity": {
+                  "column": "capacity"
+                },
                 "floor": {
                   "column": "floor"
                 },
@@ -425,6 +520,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
                 },
                 "roomNumber": {
                   "column": "roomNumber"
@@ -461,7 +559,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ],
               "typeName": "FacultyRank"
             },
@@ -581,6 +680,59 @@
               },
               "uniques": []
             },
+            "ChangeLog": {
+              "columns": {
+                "action": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "details": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "entity": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "entityId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Department": {
               "columns": {
                 "building": {
@@ -642,7 +794,7 @@
                 "email": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "facultyRank": {
                   "codecId": "pg/enum@1",
@@ -748,6 +900,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "capacity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "floor": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -766,6 +927,11 @@
                   },
                   "nativeType": "int4",
                   "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "roomNumber": {
                   "codecId": "pg/text@1",
@@ -828,7 +994,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ]
             },
             "OfficeStatus": {
@@ -860,7 +1027,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7bfbc90e129d77d3c3c7ca887a514510f84e9bd05a525bb0facaf5f7710da86a"
+    "storageHash": "40c54bb7d2824c97df286190bd40f3c28f3851ad18501bf59c9497ba4a637446"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

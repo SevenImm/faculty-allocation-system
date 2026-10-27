@@ -57,6 +57,7 @@ enum FacultyRank {
     LECTURER_INSTRUCTOR
     VISITING_INSTRUCTIONAL_ASSISTANT
     VISITING_LECTURER
+    VISITING_ASSISTANT
 }
 
 
@@ -69,7 +70,7 @@ model Faculty {
     id              Int          @id @default(autoincrement())
     firstName       String
     lastName        String
-    email           String       @unique
+    email           String?       @unique
     tenureStatus    TenureStatus
     facultyRank     FacultyRank
     otherNotes      String?
@@ -98,6 +99,8 @@ model Office {
     hasWindow       Boolean
     spaceType       SpaceType
     status          OfficeStatus    @default(AVAILABLE)
+    capacity        Int         @default(1)
+    notes           String? 
 
     allocations     Allocation[]
 }
@@ -138,4 +141,18 @@ model Allocation {
 
     faculty         Faculty      @relation(fields: [facultyId], references: [id])
     office          Office       @relation(fields: [officeId], references: [id])
+}
+
+// A record of every change made through the admin pages
+// (edits, deletes, status changes, assignments, imports).
+//
+// Rows are only ever added, never edited, so the list is a
+// trustworthy history of what changed and when.
+model ChangeLog {
+    id              Int          @id @default(autoincrement())
+    action          String       // e.g. "Edited faculty"
+    entity          String       // "Faculty", "Office", "Allocation" or "Import"
+    entityId        Int?         // id of the record that changed, if any
+    details         String       // what changed, e.g. "Window: No → Yes"
+    createdAt       DateTime     @default(now())
 }
