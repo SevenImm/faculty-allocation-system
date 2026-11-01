@@ -6,7 +6,15 @@
  * change history.
  */
 
-import Link from "next/link";
+import {
+  Button,
+  ButtonLink,
+  Field,
+  FormCard,
+  inputClass,
+  PageShell,
+  selectClass,
+} from "@/components/ui";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/prisma/db";
 import { logChange, describeChanges } from "@/lib/history";
@@ -97,80 +105,77 @@ export default async function EditFacultyPage({
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">
-        Edit Faculty: {member.firstName} {member.lastName}
-      </h1>
+    <PageShell
+      eyebrow="Admin · Faculty"
+      title={`Edit Faculty: ${member.firstName} ${member.lastName}`}
+      description="Only fields you change are written to the change history."
+    >
+      <FormCard title="Faculty details">
+        {error === "email" && (
+          <p className="mb-6 rounded-lg bg-maroon-50 px-4 py-3 text-sm/6 font-medium text-maroon ring-1 ring-maroon/15">
+            Another faculty member already uses that email.
+          </p>
+        )}
 
-      {error === "email" && (
-        <p className="mt-4 border p-3 text-red-600">
-          Another faculty member already uses that email.
-        </p>
-      )}
+        <form action={saveFaculty} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="First name" htmlFor="firstName">
+              <input id="firstName" name="firstName" defaultValue={member.firstName} required className={inputClass} />
+            </Field>
 
-      <form action={saveFaculty} className="mt-8 flex max-w-md flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          First name
-          <input name="firstName" defaultValue={member.firstName} required className="border p-2" />
-        </label>
+            <Field label="Last name" htmlFor="lastName">
+              <input id="lastName" name="lastName" defaultValue={member.lastName} required className={inputClass} />
+            </Field>
+          </div>
 
-        <label className="flex flex-col gap-1">
-          Last name
-          <input name="lastName" defaultValue={member.lastName} required className="border p-2" />
-        </label>
+          <Field label="Email" htmlFor="email" hint="Optional.">
+            <input id="email" name="email" type="email" defaultValue={member.email ?? ""} className={inputClass} />
+          </Field>
 
-        <label className="flex flex-col gap-1">
-          Email (optional)
-          <input name="email" type="email" defaultValue={member.email ?? ""} className="border p-2" />
-        </label>
+          <Field label="Department" htmlFor="departmentId">
+            <select id="departmentId" name="departmentId" defaultValue={member.departmentId} className={selectClass}>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.name}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-        <label className="flex flex-col gap-1">
-          Department
-          <select name="departmentId" defaultValue={member.departmentId} className="border p-2">
-            {departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </select>
-        </label>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="Rank" htmlFor="facultyRank">
+              <select id="facultyRank" name="facultyRank" defaultValue={member.facultyRank} className={selectClass}>
+                {Object.entries(RANK_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-        <label className="flex flex-col gap-1">
-          Rank
-          <select name="facultyRank" defaultValue={member.facultyRank} className="border p-2">
-            {Object.entries(RANK_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+            <Field label="Tenure" htmlFor="tenureStatus">
+              <select id="tenureStatus" name="tenureStatus" defaultValue={member.tenureStatus} className={selectClass}>
+                {Object.entries(TENURE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
 
-        <label className="flex flex-col gap-1">
-          Tenure
-          <select name="tenureStatus" defaultValue={member.tenureStatus} className="border p-2">
-            {Object.entries(TENURE_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Field label="Notes" htmlFor="otherNotes">
+            <textarea id="otherNotes" name="otherNotes" defaultValue={member.otherNotes ?? ""} rows={3} className={inputClass} />
+          </Field>
 
-        <label className="flex flex-col gap-1">
-          Notes
-          <textarea name="otherNotes" defaultValue={member.otherNotes ?? ""} rows={3} className="border p-2" />
-        </label>
-
-        <div className="flex gap-4">
-          <button type="submit" className="border p-2 font-semibold">
-            Save Changes
-          </button>
-          <Link href="/admin" className="border p-2">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </main>
+          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <ButtonLink href="/admin" variant="outline">
+              Cancel
+            </ButtonLink>
+            <Button type="submit">Save Changes</Button>
+          </div>
+        </form>
+      </FormCard>
+    </PageShell>
   );
 }

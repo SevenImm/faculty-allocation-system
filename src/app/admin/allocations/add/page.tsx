@@ -21,6 +21,14 @@
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
+import {
+  Button,
+  ButtonLink,
+  Field,
+  FormCard,
+  PageShell,
+  selectClass,
+} from "@/components/ui";
 
 
 export default async function AddAllocationPage() {
@@ -89,57 +97,67 @@ export default async function AddAllocationPage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Assign Office</h1>
-
-      <form
-        action={assignOffice}
-        className="mt-8 flex max-w-md flex-col gap-4"
+    <PageShell
+      eyebrow="Admin · Allocations"
+      title="Assign Office"
+      description="Connect a faculty member with an office that still has room."
+    >
+      <FormCard
+        title="New assignment"
+        description="Only faculty without an office, and available offices with free capacity, are listed."
       >
-        {/* Only faculty without an active allocation appear here. */}
-        <select
-          name="facultyId"
-          required
-          defaultValue=""
-          className="border p-2"
-        >
-          <option value="" disabled>
-            Select Faculty Member
-          </option>
+        <form action={assignOffice} className="space-y-6">
+          {/* Only faculty without an active allocation appear here. */}
+          <Field label="Faculty Member" htmlFor="facultyId">
+            <select
+              id="facultyId"
+              name="facultyId"
+              required
+              defaultValue=""
+              className={selectClass}
+            >
+              <option value="" disabled>
+                Select Faculty Member
+              </option>
 
-          {availableFaculty.map((member) => (
-            <option key={member.id} value={member.id}>
-              {member.firstName} {member.lastName}
-            </option>
-          ))}
-        </select>
+              {availableFaculty.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.firstName} {member.lastName}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-        {/* Only currently unoccupied offices appear here. */}
-        <select
-          name="officeId"
-          required
-          defaultValue=""
-          className="border p-2"
-        >
-          <option value="" disabled>
-            Select Office
-          </option>
+          {/* Only offices with free capacity appear here. */}
+          <Field label="Office" htmlFor="officeId">
+            <select
+              id="officeId"
+              name="officeId"
+              required
+              defaultValue=""
+              className={selectClass}
+            >
+              <option value="" disabled>
+                Select Office
+              </option>
 
-          {availableOffices.map((office) => (
-            <option key={office.id} value={office.id}>
-              {office.building} {office.roomNumber}
-              {office.capacity > 1 ? ` (${occupants(office.id)} of ${office.capacity} taken)` : ""}
-            </option>
-          ))}
-        </select>
+              {availableOffices.map((office) => (
+                <option key={office.id} value={office.id}>
+                  {office.building} {office.roomNumber}
+                  {office.capacity > 1 ? ` (${occupants(office.id)} of ${office.capacity} taken)` : ""}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-        <button
-          type="submit"
-          className="border p-2 font-semibold"
-        >
-          Assign Office
-        </button>
-      </form>
-    </main>
+          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <ButtonLink href="/admin/allocations" variant="outline">
+              View Current Allocations
+            </ButtonLink>
+            <Button type="submit">Assign Office</Button>
+          </div>
+        </form>
+      </FormCard>
+    </PageShell>
   );
 }

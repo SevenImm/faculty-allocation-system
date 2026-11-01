@@ -12,6 +12,7 @@
 
 import { useRef, useState } from "react";
 import { previewImport, applyImport, type ImportResult } from "./actions";
+import { Badge, Button, Card } from "@/components/ui";
 
 export default function ImportForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -30,77 +31,107 @@ export default function ImportForm() {
     report && report.toAdd.offices + report.toAdd.faculty + report.toAdd.allocations === 0;
 
   return (
-    <div className="mt-6 max-w-2xl">
-      <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-4">
-        <input
-          type="file"
-          name="file"
-          accept=".xlsx"
-          className="border p-2"
-          onChange={() => setResult(null)}
-        />
+    <div className="mx-auto w-full max-w-3xl space-y-6">
+      <Card>
+        <form ref={formRef} onSubmit={(e) => e.preventDefault()} className="p-7 sm:p-10">
+          <h2 className="text-base/6 font-medium text-gray-950">Spreadsheet file</h2>
+          <p className="mt-1 text-sm/5 text-gray-600">Choose the .xlsx file, then preview it.</p>
 
-        <div className="flex gap-4">
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => handle(previewImport)}
-            className="border p-2 font-semibold"
-          >
-            {busy ? "Working..." : "Preview"}
-          </button>
+          <label className="mt-6 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gold-200 bg-gold-50 px-6 py-10 text-center hover:border-gold">
+            <span className="text-sm/6 font-medium text-gray-950">Click to choose a file</span>
+            <span className="text-xs/5 text-gray-500">Excel .xlsx only</span>
+            <input
+              type="file"
+              name="file"
+              accept=".xlsx"
+              className="mt-4 block w-full max-w-xs text-sm text-gray-700 file:mr-3 file:rounded-full file:border-0 file:bg-maroon file:px-4 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-maroon-800"
+              onChange={() => setResult(null)}
+            />
+          </label>
 
-          {report && !report.applied && !nothingToAdd && (
-            <button
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <Button
               type="button"
+              variant={report && !report.applied && !nothingToAdd ? "secondary" : "primary"}
               disabled={busy}
-              onClick={() => handle(applyImport)}
-              className="border p-2 font-semibold"
+              onClick={() => handle(previewImport)}
             >
-              Import
-            </button>
-          )}
-        </div>
-      </form>
+              {busy ? "Working..." : "Preview"}
+            </Button>
+
+            {report && !report.applied && !nothingToAdd && (
+              <Button type="button" disabled={busy} onClick={() => handle(applyImport)}>
+                Import
+              </Button>
+            )}
+          </div>
+        </form>
+      </Card>
 
       {result && !result.ok && (
-        <p className="mt-6 border p-4 text-red-600">{result.error}</p>
+        <p className="rounded-xl bg-maroon-50 px-5 py-4 text-sm/6 font-medium text-maroon ring-1 ring-maroon/15">
+          {result.error}
+        </p>
       )}
 
       {report && (
-        <div className="mt-6 border p-4">
-          <h2 className="text-xl font-semibold">
-            {report.applied ? "Import complete" : "Preview (nothing saved yet)"}
-          </h2>
+        <Card className="relative overflow-hidden p-7 sm:p-10">
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-gold to-maroon" />
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-medium tracking-tight text-gray-950">
+              {report.applied ? "Import complete" : "Preview"}
+            </h2>
+            <Badge tone={report.applied ? "green" : "gold"}>
+              {report.applied ? "Saved" : "Nothing saved yet"}
+            </Badge>
+          </div>
 
-          <p className="mt-2">
-            In file: {report.inFile.offices} offices, {report.inFile.faculty} faculty
-          </p>
-          <p>
-            {report.applied ? "Added" : "Will add"}: {report.toAdd.offices} offices,{" "}
-            {report.toAdd.faculty} faculty, {report.toAdd.allocations} assignments
-          </p>
+          <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-lg bg-gray-50 p-4 ring-1 ring-black/5">
+              <dt className="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                In file
+              </dt>
+              <dd className="mt-1 text-sm/6 text-gray-950">
+                {report.inFile.offices} offices, {report.inFile.faculty} faculty
+              </dd>
+            </div>
+            <div className="rounded-lg bg-gray-50 p-4 ring-1 ring-black/5">
+              <dt className="font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                {report.applied ? "Added" : "Will add"}
+              </dt>
+              <dd className="mt-1 text-sm/6 text-gray-950">
+                {report.toAdd.offices} offices, {report.toAdd.faculty} faculty,{" "}
+                {report.toAdd.allocations} assignments
+              </dd>
+            </div>
+          </dl>
+
           {nothingToAdd && !report.applied && (
-            <p className="mt-2">Everything in this file is already in the system.</p>
+            <p className="mt-4 text-sm/6 text-gray-600">
+              Everything in this file is already in the system.
+            </p>
           )}
 
           {report.sharedOffices.length > 0 && (
-            <p className="mt-2">Shared offices: {report.sharedOffices.join(", ")}</p>
+            <p className="mt-4 text-sm/6 text-gray-700">
+              <span className="font-medium">Shared offices:</span>{" "}
+              {report.sharedOffices.join(", ")}
+            </p>
           )}
 
           {report.warnings.length > 0 && (
-            <>
-              <h3 className="mt-4 font-semibold">
+            <div className="mt-6">
+              <h3 className="text-sm/6 font-medium text-gray-950">
                 Rows to review ({report.warnings.length})
               </h3>
-              <ul className="mt-2 list-disc pl-6">
+              <ul className="mt-2 list-disc space-y-1 pl-6 text-sm/6 text-gray-700 marker:text-gold">
                 {report.warnings.map((w) => (
                   <li key={w}>{w}</li>
                 ))}
               </ul>
-            </>
+            </div>
           )}
-        </div>
+        </Card>
       )}
     </div>
   );

@@ -16,6 +16,14 @@ import { Temporal } from "temporal-polyfill";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
+import {
+  Button,
+  ButtonLink,
+  Card,
+  EmptyState,
+  PageShell,
+  SectionHeading,
+} from "@/components/ui";
 
 export default async function AllocationsPage() {
   const faculty = await db.orm.public.Faculty.all();
@@ -56,64 +64,83 @@ export default async function AllocationsPage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Current Allocations</h1>
+    <PageShell
+      eyebrow="Admin"
+      title="Current Allocations"
+      description="Active office assignments. Deallocating keeps the record as history."
+      actions={<ButtonLink href="/admin/allocations/add">Assign Office</ButtonLink>}
+    >
+      <SectionHeading
+        title="Active assignments"
+        description={`${activeAllocations.length} active`}
+      />
 
       {activeAllocations.length === 0 ? (
-        <p className="mt-4">There are no active allocations.</p>
-      ) : (
         <div className="mt-6">
-          {activeAllocations.map((allocation) => {
-            // Match foreign-key IDs to their Faculty and Office records.
-            const member = faculty.find(
-              (member) => member.id === allocation.facultyId
-            );
-
-            const office = offices.find(
-              (office) => office.id === allocation.officeId
-            );
-
-            return (
-              <div
-                key={allocation.id}
-                className="mb-4 border p-4"
-              >
-                <p>
-                  <strong>Faculty:</strong>{" "}
-                  {member
-                    ? `${member.firstName} ${member.lastName}`
-                    : "Unknown"}
-                </p>
-
-                <p>
-                  <strong>Office:</strong>{" "}
-                  {office
-                    ? `${office.building} ${office.roomNumber}`
-                    : "Unknown"}
-                </p>
-
-                <form action={deallocateOffice} className="mt-3">
-                  {/* The user does not need to see the Allocation ID,
-                      but the Server Action needs it to update the
-                      correct database record. */}
-                  <input
-                    type="hidden"
-                    name="allocationId"
-                    value={allocation.id}
-                  />
-
-                  <button
-                    type="submit"
-                    className="border p-2 font-semibold"
-                  >
-                    Deallocate Office
-                  </button>
-                </form>
-              </div>
-            );
-          })}
+          <EmptyState
+            title="There are no active allocations."
+            action={<ButtonLink href="/admin/allocations/add">Assign Office</ButtonLink>}
+          />
         </div>
+      ) : (
+        <Card className="mt-6 overflow-hidden">
+          <ul className="divide-y divide-black/5">
+            {activeAllocations.map((allocation) => {
+              // Match foreign-key IDs to their Faculty and Office records.
+              const member = faculty.find(
+                (member) => member.id === allocation.facultyId
+              );
+
+              const office = offices.find(
+                (office) => office.id === allocation.officeId
+              );
+
+              return (
+                <li
+                  key={allocation.id}
+                  className="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-maroon text-sm font-semibold text-gold-100">
+                      {member
+                        ? `${member.firstName.charAt(0)}${member.lastName.charAt(0)}`
+                        : "?"}
+                    </span>
+                    <div>
+                      <p className="font-medium text-gray-950">
+                        {member
+                          ? `${member.firstName} ${member.lastName}`
+                          : "Unknown"}
+                      </p>
+                      <p className="text-sm/6 text-gray-500">
+                        Office:{" "}
+                        {office
+                          ? `${office.building} ${office.roomNumber}`
+                          : "Unknown"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <form action={deallocateOffice}>
+                    {/* The user does not need to see the Allocation ID,
+                        but the Server Action needs it to update the
+                        correct database record. */}
+                    <input
+                      type="hidden"
+                      name="allocationId"
+                      value={allocation.id}
+                    />
+
+                    <Button type="submit" variant="danger">
+                      Deallocate Office
+                    </Button>
+                  </form>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
       )}
-    </main>
+    </PageShell>
   );
 }

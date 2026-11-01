@@ -14,11 +14,23 @@
  * Historical allocations remain in the database after deallocation.
  */
 
-import Link from "next/link";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
-import { RANK_LABELS } from "@/lib/labels";
+import { RANK_LABELS, TENURE_LABELS } from "@/lib/labels";
+import {
+  Badge,
+  Button,
+  ButtonLink,
+  Card,
+  EmptyState,
+  inputClass,
+  outlineButtonClass,
+  PageShell,
+  SectionHeading,
+  selectClass,
+  StatCard,
+} from "@/components/ui";
 import { logChange } from "@/lib/history";
 
 
@@ -117,167 +129,205 @@ export default async function AdminPage({
     return true;
   });
 
+  const activeAllocations = allocations.filter(
+    (allocation) => allocation.endedAt === null
+  );
+
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Faculty Allocation System</h1>
+    <PageShell
+      eyebrow="Admin"
+      title="Faculty Allocation System"
+      description="Add faculty, manage offices and assign spaces."
+      actions={
+        <>
+          {/* Main administrative actions */}
+          <ButtonLink href="/admin/faculty/add">+ Add Faculty</ButtonLink>
+          <ButtonLink href="/admin/allocations/add" variant="secondary">
+            Assign Office
+          </ButtonLink>
+          <ButtonLink href="/admin/offices" variant="secondary">
+            Manage Offices
+          </ButtonLink>
+        </>
+      }
+    >
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Faculty" value={faculty.length} />
+        <StatCard label="Offices" value={offices.length} />
+        <StatCard label="Active assignments" value={activeAllocations.length} />
+        <StatCard
+          label="Without an office"
+          value={rows.filter(({ office }) => !office).length}
+        />
+      </div>
 
-      {/* Main administrative actions */}
-      <div className="mt-6 flex gap-4">
-        <Link
-          href="/admin/faculty/add"
-          className="border p-2 font-semibold"
-        >
-          + Add Faculty
-        </Link>
-
-        <Link
-          href="/admin/offices"
-          className="border p-2 font-semibold"
-        >
-          Manage Offices
-        </Link>
-
-        <Link
-          href="/admin/allocations/add"
-          className="border p-2 font-semibold"
-        >
-          Assign Office
-        </Link>
-
-        <Link
-          href="/admin/import"
-          className="border p-2 font-semibold"
-        >
+      {/* Data tools */}
+      <div className="mt-6 flex flex-wrap gap-3">
+        <ButtonLink href="/admin/import" variant="outline">
           Import Spreadsheet
-        </Link>
+        </ButtonLink>
 
         {/* A plain <a> (not Link) so the browser downloads the file. */}
-        <a
-          href="/admin/export"
-          className="border p-2 font-semibold"
-        >
+        <a href="/admin/export" className={outlineButtonClass}>
           Export Spreadsheet
         </a>
 
-        <Link
-          href="/admin/history"
-          className="border p-2 font-semibold"
-        >
+        <ButtonLink href="/admin/history" variant="outline">
           History
-        </Link>
+        </ButtonLink>
       </div>
 
-      <h2 className="mt-8 text-2xl font-semibold">
-        Faculty Members
-      </h2>
-
-      {/* NEW (search): a normal GET form. Pressing Search reloads the page
-          with the filters in the URL, e.g. /admin?q=hood&department=3 */}
-      <form method="get" className="mt-4 flex flex-wrap gap-2">
-        <input
-          name="q"
-          defaultValue={filters.q ?? ""}
-          placeholder="Search name, email or office"
-          className="border p-2"
+      <div className="mt-16">
+        <SectionHeading
+          title="Faculty Members"
+          description={`Showing ${visible.length} of ${faculty.length} faculty members`}
         />
 
-        <select
-          name="department"
-          defaultValue={filters.department ?? ""}
-          className="border p-2"
-        >
-          <option value="">All departments</option>
-          {departments.map((department) => (
-            <option key={department.id} value={department.id}>
-              {department.name}
-            </option>
-          ))}
-        </select>
+        {/* NEW (search): a normal GET form. Pressing Search reloads the page
+            with the filters in the URL, e.g. /admin?q=hood&department=3 */}
+        <Card className="mt-6 p-4">
+          <form method="get" className="grid gap-3 md:grid-cols-[2fr_1.5fr_1.5fr_1fr_auto]">
+            <input
+              name="q"
+              defaultValue={filters.q ?? ""}
+              placeholder="Search name, email or office"
+              aria-label="Search"
+              className={inputClass}
+            />
 
-        <select
-          name="rank"
-          defaultValue={filters.rank ?? ""}
-          className="border p-2"
-        >
-          <option value="">All ranks</option>
-          {Object.entries(RANK_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+            <select
+              name="department"
+              defaultValue={filters.department ?? ""}
+              aria-label="Department"
+              className={selectClass}
+            >
+              <option value="">All departments</option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.name}
+                </option>
+              ))}
+            </select>
 
-        <select
-          name="assigned"
-          defaultValue={filters.assigned ?? ""}
-          className="border p-2"
-        >
-          <option value="">Any office status</option>
-          <option value="yes">Has an office</option>
-          <option value="no">No office</option>
-        </select>
+            <select
+              name="rank"
+              defaultValue={filters.rank ?? ""}
+              aria-label="Rank"
+              className={selectClass}
+            >
+              <option value="">All ranks</option>
+              {Object.entries(RANK_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
 
-        <button type="submit" className="border p-2 font-semibold">
-          Search
-        </button>
+            <select
+              name="assigned"
+              defaultValue={filters.assigned ?? ""}
+              aria-label="Office status"
+              className={selectClass}
+            >
+              <option value="">Any office status</option>
+              <option value="yes">Has an office</option>
+              <option value="no">No office</option>
+            </select>
 
-        <Link href="/admin" className="border p-2">
-          Clear
-        </Link>
-      </form>
-
-      {/* NEW (search): how many results are shown */}
-      <p className="mt-2">
-        Showing {visible.length} of {faculty.length} faculty members
-      </p>
-
-      {visible.length === 0 ? (
-        <p className="mt-4">
-          {faculty.length === 0
-            ? "No faculty members have been added yet."
-            : "No faculty members match your search."}
-        </p>
-      ) : (
-        <div className="mt-4">
-          {visible.map(({ member, office }) => (
-            <div key={member.id} className="mb-4 border p-4">
-              <p className="font-semibold">
-                {member.firstName} {member.lastName}
-              </p>
-
-              <p>{member.email}</p>
-
-              <p>Rank: {member.facultyRank}</p>
-
-              <p>Tenure: {member.tenureStatus}</p>
-
-              <p>Other Notes: {member.otherNotes || "None"}</p>
-
-              <p>
-                Office:{" "}
-                {office
-                  ? `${office.building} ${office.roomNumber}`
-                  : "Not Assigned"}
-              </p>
-
-              {/* Delete button. The hidden input sends this
-                  faculty member's id to deleteFaculty. */}
-              <form action={deleteFaculty} className="mt-3 flex gap-2">
-                <Link
-                  href={`/admin/faculty/${member.id}/edit`}
-                  className="border p-2 font-semibold"
-                >
-                  Edit
-                </Link>
-
-                <input type="hidden" name="facultyId" value={member.id} />
-
-                <ConfirmDeleteButton name={`${member.firstName} ${member.lastName}`} />
-              </form>
+            <div className="flex gap-2">
+              <Button type="submit">Search</Button>
+              <ButtonLink href="/admin" variant="outline">
+                Clear
+              </ButtonLink>
             </div>
-          ))}
-        </div>
-      )}
-    </main>
+          </form>
+        </Card>
+
+        {visible.length === 0 ? (
+          <div className="mt-6">
+            <EmptyState
+              title={
+                faculty.length === 0
+                  ? "No faculty members have been added yet."
+                  : "No faculty members match your search."
+              }
+              action={
+                faculty.length === 0 ? (
+                  <ButtonLink href="/admin/faculty/add">+ Add Faculty</ButtonLink>
+                ) : undefined
+              }
+            />
+          </div>
+        ) : (
+          <Card className="mt-6 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm/6">
+                <thead className="bg-gray-50 font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
+                  <tr>
+                    <th className="px-6 py-3">Name</th>
+                    <th className="px-6 py-3">Rank</th>
+                    <th className="px-6 py-3">Tenure</th>
+                    <th className="px-6 py-3">Office</th>
+                    <th className="px-6 py-3">Other Notes</th>
+                    <th className="px-6 py-3">
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-black/5">
+                  {visible.map(({ member, office }) => (
+                    <tr key={member.id} className="align-top hover:bg-gray-50/60">
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-gray-950">
+                          {member.firstName} {member.lastName}
+                        </p>
+                        <p className="text-gray-500">{member.email}</p>
+                      </td>
+                      <td className="px-6 py-4 text-gray-700">
+                        {RANK_LABELS[member.facultyRank] ?? member.facultyRank}
+                      </td>
+                      <td className="px-6 py-4 text-gray-700">
+                        {TENURE_LABELS[member.tenureStatus] ?? member.tenureStatus}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {office ? (
+                          <Badge tone="maroon">
+                            {office.building} {office.roomNumber}
+                          </Badge>
+                        ) : (
+                          <Badge tone="gray">Not Assigned</Badge>
+                        )}
+                      </td>
+                      <td className="max-w-xs px-6 py-4 text-gray-600">
+                        {member.otherNotes || "None"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {/* Delete button. The hidden input sends this
+                            faculty member's id to deleteFaculty. */}
+                        <form action={deleteFaculty} className="flex justify-end gap-2">
+                          <ButtonLink
+                            href={`/admin/faculty/${member.id}/edit`}
+                            variant="outline"
+                          >
+                            Edit
+                          </ButtonLink>
+
+                          <input type="hidden" name="facultyId" value={member.id} />
+
+                          <ConfirmDeleteButton
+                            name={`${member.firstName} ${member.lastName}`}
+                            label="Delete"
+                          />
+                        </form>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        )}
+      </div>
+    </PageShell>
   );
 }

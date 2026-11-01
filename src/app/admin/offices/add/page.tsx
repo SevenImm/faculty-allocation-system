@@ -1,5 +1,19 @@
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import {
+  Button,
+  ButtonLink,
+  Field,
+  FormCard,
+  inputClass,
+  PageShell,
+  selectClass,
+} from "@/components/ui";
+
+const buildings = [
+  "AIC", "ANX", "BLK", "CHS", "CNS", "CWT", "ECHS", "FPA", "H", "KCB", "KLM",
+  "JHBF", "LBV", "PLA", "PLG", "REC", "RLC", "STC", "TNC", "UPD", "UVIL", "WHT", "ZSC",
+];
 import { logChange } from "@/lib/history";
 
 export default function AddOfficePage() {
@@ -37,116 +51,109 @@ export default function AddOfficePage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Add Office</h1>
+    <PageShell
+      eyebrow="Admin · Offices"
+      title="Add Office"
+      description="Register a new office or cubicle."
+    >
+      <FormCard title="Office details">
+        <form action={addOffice} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="Building" htmlFor="building">
+              <select
+                id="building"
+                name="building"
+                required
+                defaultValue=""
+                className={selectClass}
+              >
+                <option value="" disabled>
+                  Select Building
+                </option>
+                {buildings.map((building) => (
+                  <option key={building} value={building}>
+                    {building}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-      <form action={addOffice} className="mt-8 flex max-w-md flex-col gap-4">
+            <Field label="Room Number" htmlFor="roomNumber">
+              <input id="roomNumber" name="roomNumber" required className={inputClass} />
+            </Field>
+          </div>
 
-        <select
-          name="building"
-          required
-          defaultValue=""
-          className="border p-2"
-        >
-          <option value="" disabled>
-            Select Building
-          </option>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="Floor" htmlFor="floor">
+              <input
+                id="floor"
+                name="floor"
+                type="number"
+                min="1"
+                required
+                className={inputClass}
+              />
+            </Field>
 
-          <option value="AIC">AIC</option>
-          <option value="ANX">ANX</option>
-          <option value="BLK">BLK</option>
-          <option value="CHS">CHS</option>
-          <option value="CNS">CNS</option>
-          <option value="CWT">CWT</option>
-          <option value="ECHS">ECHS</option>
-          <option value="FPA">FPA</option>
-          <option value="H">H</option>
-          <option value="KCB">KCB</option>
-          <option value="KLM">KLM</option>
-          <option value="JHBF">JHBF</option>
-          <option value="LBV">LBV</option>
-          <option value="PLA">PLA</option>
-          <option value="PLG">PLG</option>
-          <option value="REC">REC</option>
-          <option value="RLC">RLC</option>
-          <option value="STC">STC</option>
-          <option value="TNC">TNC</option>
-          <option value="UPD">UPD</option>
-          <option value="UVIL">UVIL</option>
-          <option value="WHT">WHT</option>
-          <option value="ZSC">ZSC</option>
-        </select>
+            <Field label="Capacity" htmlFor="capacity" hint="How many people fit.">
+              <input
+                id="capacity"
+                name="capacity"
+                type="number"
+                min="1"
+                defaultValue="1"
+                required
+                className={inputClass}
+              />
+            </Field>
+          </div>
 
-        <input
-          name="roomNumber"
-          placeholder="Room Number"
-          required
-          className="border p-2"
-        />
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="Has Window?" htmlFor="hasWindow">
+              <select
+                id="hasWindow"
+                name="hasWindow"
+                required
+                defaultValue=""
+                className={selectClass}
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </Field>
 
-        <input
-          name="floor"
-          type="number"
-          min="1"
-          placeholder="Floor"
-          required
-          className="border p-2"
-        />
+            <Field label="Space Type" htmlFor="spaceType">
+              <select
+                id="spaceType"
+                name="spaceType"
+                required
+                defaultValue=""
+                className={selectClass}
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                <option value="OFFICE">Office</option>
+                <option value="CUBICLE">Cubicle</option>
+              </select>
+            </Field>
+          </div>
 
-        <select
-          name="hasWindow"
-          required
-          defaultValue=""
-          className="border p-2"
-        >
-          <option value="" disabled>
-            Has Window?
-          </option>
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
+          <Field label="Notes" htmlFor="notes" hint="Optional, e.g. Department Chair office.">
+            <textarea id="notes" name="notes" rows={3} className={inputClass} />
+          </Field>
 
-        <select
-          name="spaceType"
-          required
-          defaultValue=""
-          className="border p-2"
-        >
-          <option value="" disabled>
-            Select Space Type
-          </option>
-
-          <option value="OFFICE">Office</option>
-          <option value="CUBICLE">Cubicle</option>
-        </select>
-
-        <label className="flex flex-col gap-1">
-          Capacity (how many people fit)
-          <input
-            name="capacity"
-            type="number"
-            min="1"
-            defaultValue="1"
-            required
-            className="border p-2"
-          />
-        </label>
-
-        <textarea
-          name="notes"
-          placeholder="Notes (optional), e.g. Department Chair office"
-          rows={3}
-          className="border p-2"
-        />
-
-        <button
-          type="submit"
-          className="border p-2 font-semibold"
-        >
-          Add Office
-        </button>
-
-      </form>
-    </main>
+          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <ButtonLink href="/admin/offices" variant="outline">
+              Cancel
+            </ButtonLink>
+            <Button type="submit">Add Office</Button>
+          </div>
+        </form>
+      </FormCard>
+    </PageShell>
   );
 }

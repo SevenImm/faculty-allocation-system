@@ -14,7 +14,7 @@ export default function ConfirmDeleteButton({
   return (
     <button
       type="submit"
-      className="border p-2 font-semibold text-red-600"
+      className="inline-flex items-center justify-center rounded-lg border border-transparent bg-white px-3 py-[calc(--spacing(1.5)-1px)] text-sm font-medium whitespace-nowrap text-maroon shadow-sm ring-1 ring-maroon/25 hover:bg-maroon-50"
       onClick={(event) => {
         const ok = window.confirm(`Delete ${name}? ${warning}`);
         if (!ok) event.preventDefault();
