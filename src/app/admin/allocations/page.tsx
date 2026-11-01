@@ -15,6 +15,7 @@
 import { Temporal } from "temporal-polyfill";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { logChange } from "@/lib/history";
 
 export default async function AllocationsPage() {
   const faculty = await db.orm.public.Faculty.all();
@@ -38,6 +39,18 @@ export default async function AllocationsPage() {
       .update({
         endedAt: Temporal.Now.plainDateTimeISO(),
       });
+
+    const allocation = await db.orm.public.Allocation.where({ id: allocationId }).first();
+    if (allocation) {
+      const member = await db.orm.public.Faculty.where({ id: allocation.facultyId }).first();
+      const office = await db.orm.public.Office.where({ id: allocation.officeId }).first();
+      await logChange({
+        action: "Deallocated office",
+        entity: "Allocation",
+        entityId: allocationId,
+        details: `${member?.firstName} ${member?.lastName} left ${office?.building}-${office?.roomNumber}`,
+      });
+    }
 
     redirect("/admin");
   }

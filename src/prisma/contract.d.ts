@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ed3d5e201101d8b3019b442224f8db83eb344c76d78b05810cc48579ad51d507'>;
+  StorageHashBase<'40c54bb7d2824c97df286190bd40f3c28f3851ad18501bf59c9497ba4a637446'>;
 export type ExecutionHash =
   ExecutionHashBase<'054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269'>;
 export type ProfileHash =
@@ -257,6 +257,14 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly officeId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly ChangeLog: {
+      readonly action: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly details: CodecTypes['pg/text@1']['output'];
+      readonly entity: CodecTypes['pg/text@1']['output'];
+      readonly entityId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Department: {
       readonly building: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -306,6 +314,14 @@ export type FieldInputTypes = {
       readonly facultyId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly officeId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly ChangeLog: {
+      readonly action: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly details: CodecTypes['pg/text@1']['input'];
+      readonly entity: CodecTypes['pg/text@1']['input'];
+      readonly entityId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
     };
     readonly Department: {
       readonly building: CodecTypes['pg/text@1']['input'] | null;
@@ -357,6 +373,14 @@ export type StorageColumnTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly officeId: CodecTypes['pg/int4@1']['output'];
     };
+    readonly ChangeLog: {
+      readonly action: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly details: CodecTypes['pg/text@1']['output'];
+      readonly entity: CodecTypes['pg/text@1']['output'];
+      readonly entityId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Department: {
       readonly building: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -406,6 +430,14 @@ export type StorageColumnInputTypes = {
       readonly facultyId: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly officeId: CodecTypes['pg/int4@1']['input'];
+    };
+    readonly ChangeLog: {
+      readonly action: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly details: CodecTypes['pg/text@1']['input'];
+      readonly entity: CodecTypes['pg/text@1']['input'];
+      readonly entityId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
     };
     readonly Department: {
       readonly building: CodecTypes['pg/text@1']['input'] | null;
@@ -460,6 +492,15 @@ export namespace Models {
     office: public_Office;
     readonly [RelationKeys]?: 'faculty' | 'office';
   };
+  export type public_ChangeLog = {
+    action: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    details: CodecTypes['pg/text@1']['output'];
+    entity: CodecTypes['pg/text@1']['output'];
+    entityId: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    readonly [RelationKeys]?: never;
+  };
   export type public_Department = {
     building: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
@@ -511,6 +552,7 @@ export namespace Models {
 export declare const models: {
   public: {
     Allocation: Models.public_Allocation;
+    ChangeLog: Models.public_ChangeLog;
     Department: Models.public_Department;
     Faculty: Models.public_Faculty;
     Office: Models.public_Office;
@@ -599,6 +641,50 @@ type ContractBase = Omit<
                   };
                 },
               ];
+            };
+            readonly ChangeLog: {
+              columns: {
+                readonly action: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly details: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly entity: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly entityId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
             };
             readonly Department: {
               columns: {
@@ -831,6 +917,7 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Allocation';
     };
+    readonly ChangeLog: { readonly namespace: 'public' & NamespaceId; readonly model: 'ChangeLog' };
     readonly Department: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Department';
@@ -908,6 +995,51 @@ type ContractBase = Omit<
                 readonly facultyId: { readonly column: 'facultyId' };
                 readonly id: { readonly column: 'id' };
                 readonly officeId: { readonly column: 'officeId' };
+              };
+            };
+          };
+          readonly ChangeLog: {
+            readonly fields: {
+              readonly action: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly details: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly entity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly entityId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'ChangeLog';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly action: { readonly column: 'action' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly details: { readonly column: 'details' };
+                readonly entity: { readonly column: 'entity' };
+                readonly entityId: { readonly column: 'entityId' };
+                readonly id: { readonly column: 'id' };
               };
             };
           };

@@ -18,21 +18,9 @@ import Link from "next/link";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
+import { RANK_LABELS } from "@/lib/labels";
+import { logChange } from "@/lib/history";
 
-// NEW (search): readable labels for the rank filter dropdown.
-const RANK_LABELS: Record<string, string> = {
-  FULL: "Full Professor",
-  ASSOCIATE: "Associate Professor",
-  ASSISTANT: "Assistant Professor",
-  INSTRUCTIONAL_FULL: "Instructional Full Professor",
-  INSTRUCTIONAL_ASSOCIATE: "Instructional Associate Professor",
-  INSTRUCTIONAL_ASSISTANT: "Instructional Assistant Professor",
-  SENIOR_LECTURER: "Senior Lecturer",
-  LECTURER_INSTRUCTOR: "Lecturer / Instructor",
-  VISITING_INSTRUCTIONAL_ASSISTANT: "Visiting Instructional Assistant Professor",
-  VISITING_LECTURER: "Visiting Lecturer",
-  VISITING_INSTRUCTOR: "Visiting Assistant Professor",
-};
 
 // NEW (search): the filters arrive in the page URL, for example
 // /admin?q=hood&department=3&assigned=yes
@@ -60,11 +48,21 @@ export default async function AdminPage({
     "use server";
 
     const facultyId = Number(formData.get("facultyId"));
+    const member = await db.orm.public.Faculty.where({ id: facultyId }).first();
 
     // A faculty member can't be deleted while allocations point to them,
     // so remove their allocations first, then the faculty record.
-    await db.orm.public.Allocation.where({ facultyId }).delete();
+    await db.orm.public.Allocation.where({ facultyId }).deleteAndCount();
     await db.orm.public.Faculty.where({ id: facultyId }).delete();
+
+    if (member) {
+      await logChange({
+        action: "Deleted faculty",
+        entity: "Faculty",
+        entityId: facultyId,
+        details: `${member.firstName} ${member.lastName} and their office assignments`,
+      });
+    }
 
     redirect("/admin");
   }
@@ -160,6 +158,13 @@ export default async function AdminPage({
         >
           Export Spreadsheet
         </a>
+
+        <Link
+          href="/admin/history"
+          className="border p-2 font-semibold"
+        >
+          History
+        </Link>
       </div>
 
       <h2 className="mt-8 text-2xl font-semibold">
@@ -257,7 +262,14 @@ export default async function AdminPage({
 
               {/* Delete button. The hidden input sends this
                   faculty member's id to deleteFaculty. */}
-              <form action={deleteFaculty} className="mt-3">
+              <form action={deleteFaculty} className="mt-3 flex gap-2">
+                <Link
+                  href={`/admin/faculty/${member.id}/edit`}
+                  className="border p-2 font-semibold"
+                >
+                  Edit
+                </Link>
+
                 <input type="hidden" name="facultyId" value={member.id} />
 
                 <ConfirmDeleteButton name={`${member.firstName} ${member.lastName}`} />

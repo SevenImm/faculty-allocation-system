@@ -1,5 +1,6 @@
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { logChange } from "@/lib/history";
 
 export default function AddOfficePage() {
   async function addOffice(formData: FormData) {
@@ -12,12 +13,24 @@ export default function AddOfficePage() {
     const spaceType = formData.get("spaceType") as
       | "OFFICE"
       | "CUBICLE";
-    await db.orm.public.Office.create({
+    const capacity = Math.max(1, Number(formData.get("capacity")) || 1);
+    const notes = (formData.get("notes") as string).trim() || null;
+
+    const office = await db.orm.public.Office.create({
       building,
       roomNumber,
       floor,
       hasWindow,
       spaceType,
+      capacity,
+      notes,
+    });
+
+    await logChange({
+      action: "Added office",
+      entity: "Office",
+      entityId: office.id,
+      details: `${building}-${roomNumber} (capacity ${capacity})`,
     });
 
     redirect("/admin/offices");
@@ -106,6 +119,25 @@ export default function AddOfficePage() {
           <option value="OFFICE">Office</option>
           <option value="CUBICLE">Cubicle</option>
         </select>
+
+        <label className="flex flex-col gap-1">
+          Capacity (how many people fit)
+          <input
+            name="capacity"
+            type="number"
+            min="1"
+            defaultValue="1"
+            required
+            className="border p-2"
+          />
+        </label>
+
+        <textarea
+          name="notes"
+          placeholder="Notes (optional), e.g. Department Chair office"
+          rows={3}
+          className="border p-2"
+        />
 
         <button
           type="submit"
