@@ -10,6 +10,16 @@
 
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
+import { RANK_LABELS, TENURE_LABELS } from "@/lib/labels";
+import {
+  Button,
+  ButtonLink,
+  Field,
+  FormCard,
+  inputClass,
+  PageShell,
+  selectClass,
+} from "@/components/ui";
 import { logChange } from "@/lib/history";
 
 export default async function AddFacultyPage() {
@@ -65,117 +75,103 @@ export default async function AddFacultyPage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">Add Faculty</h1>
+    <PageShell
+      eyebrow="Admin · Faculty"
+      title="Add Faculty"
+      description="Create a new faculty record."
+    >
+      <FormCard title="Faculty details" description="All fields except notes are required.">
+        <form action={addFaculty} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="First Name" htmlFor="firstName">
+              <input id="firstName" name="firstName" required className={inputClass} />
+            </Field>
 
-      <form
-        action={addFaculty}
-        className="mt-8 flex max-w-md flex-col gap-4"
-      >
-        <input
-          name="firstName"
-          placeholder="First Name"
-          required
-          className="border p-2"
-        />
+            <Field label="Last Name" htmlFor="lastName">
+              <input id="lastName" name="lastName" required className={inputClass} />
+            </Field>
+          </div>
 
-        <input
-          name="lastName"
-          placeholder="Last Name"
-          required
-          className="border p-2"
-        />
+          <Field label="Email" htmlFor="email">
+            <input id="email" name="email" type="email" required className={inputClass} />
+          </Field>
 
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          required
-          className="border p-2"
-        />
+          <Field label="Department" htmlFor="departmentId">
+            <select
+              id="departmentId"
+              name="departmentId"
+              required
+              className={selectClass}
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select Department
+              </option>
 
-        <select
-          name="departmentId"
-          required
-          className="border p-2"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select Department
-          </option>
+              {departments.map((department) => (
+                <option key={department.id} value={department.id}>
+                  {department.name}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-          {departments.map((department) => (
-            <option key={department.id} value={department.id}>
-              {department.name}
-            </option>
-          ))}
-        </select>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field label="Tenure Status" htmlFor="tenureStatus">
+              <select
+                id="tenureStatus"
+                name="tenureStatus"
+                required
+                className={selectClass}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select Tenure Status
+                </option>
 
-        <select
-          name="tenureStatus"
-          required
-          className="border p-2"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select Tenure Status
-          </option>
+                {Object.entries(TENURE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-          <option value="TENURED">Tenured</option>
-          <option value="TENURE_TRACK">Tenure Track</option>
-          <option value="FIXED_TERM">Fixed Term</option>
-        </select>
+            {/* These values correspond directly to the FacultyRank enum
+                defined in prisma/schema.prisma (labels from lib/labels.ts). */}
+            <Field label="Faculty Rank" htmlFor="facultyRank">
+              <select
+                id="facultyRank"
+                name="facultyRank"
+                required
+                className={selectClass}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select Faculty Rank
+                </option>
 
-        {/* These values correspond directly to the FacultyRank enum
-            defined in prisma/schema.prisma. */}
-        <select
-          name="facultyRank"
-          required
-          className="border p-2"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Select Faculty Rank
-          </option>
+                {Object.entries(RANK_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
 
-          <option value="FULL">Full</option>
-          <option value="ASSOCIATE">Associate</option>
-          <option value="ASSISTANT">Assistant</option>
-          <option value="INSTRUCTIONAL_FULL">Instructional Full</option>
-          <option value="INSTRUCTIONAL_ASSOCIATE">
-            Instructional Associate
-          </option>
-          <option value="INSTRUCTIONAL_ASSISTANT">
-            Instructional Assistant
-          </option>
-          <option value="SENIOR_LECTURER">Senior Lecturer</option>
-          <option value="LECTURER_INSTRUCTOR">
-            Lecturer / Instructor
-          </option>
-          <option value="VISITING_INSTRUCTIONAL_ASSISTANT">
-            Visiting Instructional Assistant
-          </option>
-          <option value="VISITING_LECTURER">
-            Visiting Lecturer
-          </option>
-           <option value="VISITING_ASSISTANT">
-            Visiting Assistant Professor
-          </option>
-        </select>
-          <textarea
-          name="otherNotes"
-          placeholder="Other Notes"
-          rows={4}
-          className="border p-2"
-          />
+          <Field label="Other Notes" htmlFor="otherNotes" hint="Optional.">
+            <textarea id="otherNotes" name="otherNotes" rows={4} className={inputClass} />
+          </Field>
 
-        <button
-          type="submit"
-          className="border p-2 font-semibold"
-        >
-          Add Faculty
-        </button>
-      </form>
-    </main>
+          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <ButtonLink href="/admin" variant="outline">
+              Cancel
+            </ButtonLink>
+            <Button type="submit">Add Faculty</Button>
+          </div>
+        </form>
+      </FormCard>
+    </PageShell>
   );
 }

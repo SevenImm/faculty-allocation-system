@@ -6,7 +6,15 @@
  * Only the fields that actually changed are written to the change history.
  */
 
-import Link from "next/link";
+import {
+  Button,
+  ButtonLink,
+  Field,
+  FormCard,
+  inputClass,
+  PageShell,
+  selectClass,
+} from "@/components/ui";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/prisma/db";
 import { logChange, describeChanges } from "@/lib/history";
@@ -72,76 +80,72 @@ export default async function EditOfficePage({
   }
 
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold">
-        Edit Office: {office.building}-{office.roomNumber}
-      </h1>
+    <PageShell
+      eyebrow="Admin · Offices"
+      title={`Edit Office: ${office.building}-${office.roomNumber}`}
+      description="Only fields you change are written to the change history."
+    >
+      <FormCard title="Office details">
+        <form action={saveOffice} className="space-y-6">
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Field label="Building" htmlFor="building">
+              <input id="building" name="building" defaultValue={office.building} required className={inputClass} />
+            </Field>
 
-      <form action={saveOffice} className="mt-8 flex max-w-md flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          Building
-          <input name="building" defaultValue={office.building} required className="border p-2" />
-        </label>
+            <Field label="Room number" htmlFor="roomNumber">
+              <input id="roomNumber" name="roomNumber" defaultValue={office.roomNumber} required className={inputClass} />
+            </Field>
 
-        <label className="flex flex-col gap-1">
-          Room number
-          <input name="roomNumber" defaultValue={office.roomNumber} required className="border p-2" />
-        </label>
+            <Field label="Floor" htmlFor="floor">
+              <input id="floor" name="floor" type="number" min="1" defaultValue={office.floor} required className={inputClass} />
+            </Field>
+          </div>
 
-        <label className="flex flex-col gap-1">
-          Floor
-          <input name="floor" type="number" min="1" defaultValue={office.floor} required className="border p-2" />
-        </label>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Field label="Window" htmlFor="hasWindow">
+              <select id="hasWindow" name="hasWindow" defaultValue={office.hasWindow ? "true" : "false"} className={selectClass}>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </Field>
 
-        <label className="flex flex-col gap-1">
-          Window
-          <select name="hasWindow" defaultValue={office.hasWindow ? "true" : "false"} className="border p-2">
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-        </label>
+            <Field label="Space type" htmlFor="spaceType">
+              <select id="spaceType" name="spaceType" defaultValue={office.spaceType} className={selectClass}>
+                {Object.entries(SPACE_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-        <label className="flex flex-col gap-1">
-          Space type
-          <select name="spaceType" defaultValue={office.spaceType} className="border p-2">
-            {Object.entries(SPACE_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+            <Field label="Status" htmlFor="status">
+              <select id="status" name="status" defaultValue={office.status} className={selectClass}>
+                {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
 
-        <label className="flex flex-col gap-1">
-          Status
-          <select name="status" defaultValue={office.status} className="border p-2">
-            {Object.entries(STATUS_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
+          <Field label="Capacity (people)" htmlFor="capacity">
+            <input id="capacity" name="capacity" type="number" min="1" defaultValue={office.capacity} required className={inputClass} />
+          </Field>
 
-        <label className="flex flex-col gap-1">
-          Capacity (people)
-          <input name="capacity" type="number" min="1" defaultValue={office.capacity} required className="border p-2" />
-        </label>
+          <Field label="Notes" htmlFor="notes">
+            <textarea id="notes" name="notes" defaultValue={office.notes ?? ""} rows={3} className={inputClass} />
+          </Field>
 
-        <label className="flex flex-col gap-1">
-          Notes
-          <textarea name="notes" defaultValue={office.notes ?? ""} rows={3} className="border p-2" />
-        </label>
-
-        <div className="flex gap-4">
-          <button type="submit" className="border p-2 font-semibold">
-            Save Changes
-          </button>
-          <Link href="/admin/offices" className="border p-2">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </main>
+          <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <ButtonLink href="/admin/offices" variant="outline">
+              Cancel
+            </ButtonLink>
+            <Button type="submit">Save Changes</Button>
+          </div>
+        </form>
+      </FormCard>
+    </PageShell>
   );
 }

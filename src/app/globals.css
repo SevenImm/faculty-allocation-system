@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Visual theme: layout and typography follow the Tailwind Plus "Radiant"
+ * template; colors follow the TAMIU university palette (maroon + gold).
+ */
+@theme {
+  --font-sans: Switzer, system-ui, sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --radius-4xl: 2rem;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* TAMIU maroon */
+  --color-maroon-50: #faf2f4;
+  --color-maroon-100: #f3e1e6;
+  --color-maroon-200: #e5bfca;
+  --color-maroon-500: #8c2a48;
+  --color-maroon-600: #752039;
+  --color-maroon: #621630;
+  --color-maroon-800: #4f1126;
+  --color-maroon-900: #3d0c1d;
+
+  /* TAMIU gold */
+  --color-gold-50: #faf7ee;
+  --color-gold-100: #f2ecdb;
+  --color-gold-200: #e4d9b6;
+  --color-gold: #b7a56a;
+  --color-gold-600: #9c8a52;
+  --color-gold-700: #7c6d40;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
 }
