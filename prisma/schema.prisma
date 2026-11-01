@@ -57,6 +57,7 @@ enum FacultyRank {
     LECTURER_INSTRUCTOR
     VISITING_INSTRUCTIONAL_ASSISTANT
     VISITING_LECTURER
+    VISITING_ASSISTANT
 }
 
 
@@ -69,7 +70,7 @@ model Faculty {
     id              Int          @id @default(autoincrement())
     firstName       String
     lastName        String
-    email           String       @unique
+    email           String?       @unique
     tenureStatus    TenureStatus
     facultyRank     FacultyRank
     otherNotes      String?
@@ -98,6 +99,8 @@ model Office {
     hasWindow       Boolean
     spaceType       SpaceType
     status          OfficeStatus    @default(AVAILABLE)
+    capacity        Int         @default(1)
+    notes           String? 
 
     allocations     Allocation[]
 }

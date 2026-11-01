@@ -37,7 +37,8 @@ export default async function AddFacultyPage() {
       | "SENIOR_LECTURER"
       | "LECTURER_INSTRUCTOR"
       | "VISITING_INSTRUCTIONAL_ASSISTANT"
-      | "VISITING_LECTURER";
+      | "VISITING_LECTURER"
+      | "VISITING_ASSISTANT";
       const departmentId = Number(formData.get("departmentId"));
 
     // Create the Faculty record in PostgreSQL.
@@ -148,6 +149,9 @@ export default async function AddFacultyPage() {
           </option>
           <option value="VISITING_LECTURER">
             Visiting Lecturer
+          </option>
+           <option value="VISITING_ASSISTANT">
+            Visiting Assistant Professor
           </option>
         </select>
           <textarea

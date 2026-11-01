@@ -202,7 +202,7 @@
                 }
               },
               "email": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -346,6 +346,13 @@
                   "kind": "scalar"
                 }
               },
+              "capacity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "floor": {
                 "nullable": false,
                 "type": {
@@ -364,6 +371,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "notes": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -417,6 +431,9 @@
                 "building": {
                   "column": "building"
                 },
+                "capacity": {
+                  "column": "capacity"
+                },
                 "floor": {
                   "column": "floor"
                 },
@@ -425,6 +442,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "notes": {
+                  "column": "notes"
                 },
                 "roomNumber": {
                   "column": "roomNumber"
@@ -461,7 +481,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ],
               "typeName": "FacultyRank"
             },
@@ -642,7 +663,7 @@
                 "email": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
-                  "nullable": false
+                  "nullable": true
                 },
                 "facultyRank": {
                   "codecId": "pg/enum@1",
@@ -748,6 +769,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "capacity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 1
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "floor": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -766,6 +796,11 @@
                   },
                   "nativeType": "int4",
                   "nullable": false
+                },
+                "notes": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "roomNumber": {
                   "codecId": "pg/text@1",
@@ -828,7 +863,8 @@
                 "SENIOR_LECTURER",
                 "LECTURER_INSTRUCTOR",
                 "VISITING_INSTRUCTIONAL_ASSISTANT",
-                "VISITING_LECTURER"
+                "VISITING_LECTURER",
+                "VISITING_ASSISTANT"
               ]
             },
             "OfficeStatus": {
@@ -860,7 +896,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "7bfbc90e129d77d3c3c7ca887a514510f84e9bd05a525bb0facaf5f7710da86a"
+    "storageHash": "ed3d5e201101d8b3019b442224f8db83eb344c76d78b05810cc48579ad51d507"
   },
   "execution": {
     "executionHash": "054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269",

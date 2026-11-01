@@ -21,6 +21,7 @@
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 
+
 export default async function AddAllocationPage() {
   // Load all data needed to determine which faculty and offices
   // are currently available for a new assignment.
