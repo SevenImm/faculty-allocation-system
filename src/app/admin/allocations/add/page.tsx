@@ -18,6 +18,10 @@
  * and OFFICE vs. CUBICLE.
  */
 
+import {
+  getFacultyPriority,
+  getRecommendedOffices,
+} from "@/lib/officeRecommendations";
 import { db } from "@/prisma/db";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
@@ -31,25 +35,51 @@ import {
 } from "@/components/ui";
 
 
-export default async function AddAllocationPage() {
+
+export default async function AddAllocationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ facultyId?: string }>;
+}) {
+  const params = await searchParams;
+  const selectedFacultyId = Number(params.facultyId ?? 0);
+
   // Load all data needed to determine which faculty and offices
   // are currently available for a new assignment.
   const faculty = await db.orm.public.Faculty.all();
   const offices = await db.orm.public.Office.all();
   const allocations = await db.orm.public.Allocation.all();
+  const departments = await db.orm.public.Department.all();
 
   // An Allocation remains active until endedAt receives a timestamp.
   const activeAllocations = allocations.filter(
     (allocation) => allocation.endedAt === null
   );
 
-  // Remove faculty who already have an active office assignment.
+  
+  // Remove faculty who already have an active allocation.
   const availableFaculty = faculty.filter(
     (member) =>
       !activeAllocations.some(
         (allocation) => allocation.facultyId === member.id
       )
   );
+
+  // Find the faculty member selected for recommendations.
+  const selectedFaculty = availableFaculty.find(
+    (member) => member.id === selectedFacultyId
+  );
+
+  // Find that faculty member's department.
+  const selectedDepartment = departments.find(
+    (department) => department.id === selectedFaculty?.departmentId
+  );
+
+  // Calculate the selected faculty member's priority.
+  const selectedPriority = selectedFaculty
+    ? getFacultyPriority(selectedFaculty)
+    : null;
+
 
   // How many people are currently in each office.
   const occupants = (officeId: number) =>
@@ -62,6 +92,24 @@ export default async function AddAllocationPage() {
   const availableOffices = offices.filter(
     (office) => office.status === "AVAILABLE" && occupants(office.id) < office.capacity
   );
+  
+  // Offices that can potentially be recommended.
+  
+  // Match available offices to the selected faculty member's department.
+  const recommendedOffices = selectedDepartment
+    ? getRecommendedOffices(
+        selectedDepartment.name,
+        offices,
+        allocations
+      )
+    : [];
+
+  const potentialOffices = recommendedOffices.map((office) => ({
+    ...office,
+    remainingCapacity: office.capacity - occupants(office.id),
+  }));
+
+
 
   async function assignOffice(formData: FormData) {
     "use server";
@@ -96,24 +144,116 @@ export default async function AddAllocationPage() {
     redirect("/admin");
   }
 
+ 
   return (
     <PageShell
       eyebrow="Admin · Allocations"
       title="Assign Office"
       description="Connect a faculty member with an office that still has room."
     >
+      {/* Select faculty for recommendations */}
+      <form method="get" className="mb-6 flex flex-wrap gap-3">
+        <select
+          name="facultyId"
+          defaultValue={selectedFaculty?.id ?? ""}
+          className={selectClass}
+          required
+        >
+          <option value="" disabled>
+            Select faculty for recommendations
+          </option>
+
+          {availableFaculty.map((member) => (
+            <option key={member.id} value={member.id}>
+              {member.firstName} {member.lastName}
+            </option>
+          ))}
+        </select>
+
+        <Button type="submit">Find Recommendations</Button>
+      </form>
+
+      {/* Display information about the selected faculty */}
+      {selectedFaculty && selectedDepartment && (
+        <div className="mb-6 rounded-lg border border-gray-200 p-5">
+          <h2 className="text-lg font-semibold">
+            Faculty Recommendation Details
+          </h2>
+
+          <p className="mt-3">
+            <strong>Faculty:</strong>{" "}
+            {selectedFaculty.firstName} {selectedFaculty.lastName}
+          </p>
+
+          <p>
+            <strong>Department:</strong> {selectedDepartment.name}
+          </p>
+
+          <p>
+            <strong>Assignment Priority:</strong>{" "}
+            {selectedPriority === null
+              ? "Needs review"
+              : `#${selectedPriority}`}
+          </p>
+        </div>
+      )}
+      
+      {selectedFaculty && (
+        <div className="mb-6 rounded-lg border border-gray-200 p-5">
+          <h2 className="text-lg font-semibold">
+            Department-Matched Office Options
+          </h2>
+
+          <p className="mt-2 text-sm text-gray-600">
+  These offices have available capacity and are located in buildings
+  associated with this department based on historical assignments.
+  Building eligibility is provisional.
+</p>
+
+          
+        {potentialOffices.length === 0 ? (
+          <p className="mt-4">
+            No department-matched offices are currently available.
+            This may mean the department has no building mapping yet,
+            or that its mapped offices have no remaining capacity.
+          </p>
+
+          ) : (
+            <div className="mt-4 space-y-3">
+              {potentialOffices.map((office) => (
+                <div
+                  key={office.id}
+                  className="rounded-lg border p-3"
+                >
+                  <p className="font-semibold">
+                    {office.building}-{office.roomNumber}
+                  </p>
+
+                  <p>Type: {office.spaceType}</p>
+                  <p>Window: {office.hasWindow ? "Yes" : "No"}</p>
+                  <p>
+                    Remaining capacity: {office.remainingCapacity}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+
+      {/* Existing assignment form */}
       <FormCard
         title="New assignment"
         description="Only faculty without an office, and available offices with free capacity, are listed."
       >
         <form action={assignOffice} className="space-y-6">
-          {/* Only faculty without an active allocation appear here. */}
           <Field label="Faculty Member" htmlFor="facultyId">
             <select
               id="facultyId"
               name="facultyId"
               required
-              defaultValue=""
+              defaultValue={selectedFaculty?.id ?? ""}
               className={selectClass}
             >
               <option value="" disabled>
@@ -128,7 +268,6 @@ export default async function AddAllocationPage() {
             </select>
           </Field>
 
-          {/* Only offices with free capacity appear here. */}
           <Field label="Office" htmlFor="officeId">
             <select
               id="officeId"
@@ -144,7 +283,9 @@ export default async function AddAllocationPage() {
               {availableOffices.map((office) => (
                 <option key={office.id} value={office.id}>
                   {office.building} {office.roomNumber}
-                  {office.capacity > 1 ? ` (${occupants(office.id)} of ${office.capacity} taken)` : ""}
+                  {office.capacity > 1
+                    ? ` (${occupants(office.id)} of ${office.capacity} taken)`
+                    : ""}
                 </option>
               ))}
             </select>
@@ -154,6 +295,7 @@ export default async function AddAllocationPage() {
             <ButtonLink href="/admin/allocations" variant="outline">
               View Current Allocations
             </ButtonLink>
+
             <Button type="submit">Assign Office</Button>
           </div>
         </form>
