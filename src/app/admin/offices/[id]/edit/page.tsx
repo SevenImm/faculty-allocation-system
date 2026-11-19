@@ -12,11 +12,12 @@ import {
   Field,
   FormCard,
   inputClass,
-  PageShell,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { logChange, describeChanges } from "@/lib/history";
 import { SPACE_LABELS, STATUS_LABELS } from "@/lib/labels";
 
@@ -33,6 +34,7 @@ export default async function EditOfficePage({
 
   async function saveOffice(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const current = await db.orm.public.Office.where({ id }).first();
     if (!current) redirect("/admin/offices");

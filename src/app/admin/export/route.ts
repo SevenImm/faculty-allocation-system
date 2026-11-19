@@ -7,8 +7,11 @@
  */
 
 import { exportSpreadsheet } from "@/lib/spreadsheet";
+import { requireAdmin } from "@/lib/auth/dal";
 
 export async function GET() {
+  await requireAdmin();
+
   const file = await exportSpreadsheet();
   const date = new Date().toISOString().slice(0, 10);
 

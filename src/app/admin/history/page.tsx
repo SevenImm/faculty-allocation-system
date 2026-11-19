@@ -5,7 +5,13 @@
  * edits, deletes, status changes, assignments and imports.
  */
 
-import { Badge, ButtonLink, Card, EmptyState, PageShell } from "@/components/ui";
+import {
+  Badge,
+  ButtonLink,
+  Card,
+  EmptyState,
+} from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import { db } from "@/prisma/db";
 
 export default async function HistoryPage() {

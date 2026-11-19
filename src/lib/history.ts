@@ -10,7 +10,7 @@ import { db } from "@/prisma/db";
 
 export async function logChange(entry: {
   action: string;
-  entity: "Faculty" | "Office" | "Allocation" | "Import";
+  entity: "Faculty" | "Office" | "Allocation" | "Import" | "User";
   entityId?: number | null;
   details: string;
 }) {

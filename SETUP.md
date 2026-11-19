@@ -90,7 +90,10 @@ Add:
 
 ```env
 DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/faculty_allocation"
+SESSION_SECRET="any-long-random-string"
 ```
+
+`SESSION_SECRET` signs the login cookie. Generate a value with `openssl rand -base64 32` (or type any long random string). Development falls back to a built-in value if it is missing, but production refuses to start without it.
 
 Replace `YOUR_PASSWORD` with your own local PostgreSQL password.
 
@@ -171,6 +174,36 @@ http://localhost:3000/admin
 
 ---
 
+## 8a. Create the First Administrator
+
+The admin pages require a login. On a fresh database there are no accounts yet, so opening:
+
+```text
+http://localhost:3000/login
+```
+
+shows a one-time "Set up the first administrator" form instead of the normal login form. Fill it in to create your admin account; you are logged in straight away.
+
+After that, administrators add more accounts from **Admin → Users** (`/admin/users`).
+
+### Roles
+
+| Role      | Can do |
+|-----------|--------|
+| `ADMIN`   | Everything under `/admin`: faculty, offices, assignments, imports, history and user accounts. |
+| `FACULTY` | Log in and open the Faculty Portal (`/faculty`) to see their own office and assignment history. |
+
+A `FACULTY` account should be linked to a faculty record when it is created (the "Faculty Record" dropdown). If it is not, the portal falls back to matching the login email against the faculty member's email.
+
+Sessions last 7 days and are stored in a signed, HttpOnly cookie. Passwords are stored as salted scrypt hashes (`src/lib/auth/password.ts`).
+
+How protection works:
+
+- `src/proxy.ts` redirects visitors without a valid cookie away from `/admin` and `/faculty`, and non-admins away from `/admin`.
+- `src/lib/auth/dal.ts` provides `requireAdmin()` / `requireUser()`, which check the database. Every admin page (via `src/app/admin/layout.tsx`) and every Server Action that changes data calls one of these.
+
+---
+
 ## 9. Current Admin Features
 
 The current implementation supports:
@@ -185,6 +218,7 @@ The current implementation supports:
 - Viewing current faculty office assignments
 - Deallocating an office
 - Preserving allocation history using `assignedAt` and `endedAt`
+- Logging in with `ADMIN` / `FACULTY` roles and managing user accounts
 
 An allocation is considered active when:
 
@@ -203,12 +237,14 @@ The main database models are:
 ```text
 Department
     |
-    └── Faculty
+    └── Faculty ──── User (optional login account)
             |
             └── Allocation
                     |
                     └── Office
 ```
+
+`User` holds login accounts (`email`, `passwordHash`, `role`). A faculty member's account points at their `Faculty` row through `facultyId`; admin accounts normally have no link.
 
 `Allocation` connects a faculty member with an office.
 

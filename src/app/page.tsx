@@ -1,5 +1,7 @@
 import PortalLink from "@/components/PortalLink";
-import { Card, Container, Footer, Gradient, Navbar, Subheading } from "@/components/ui";
+import { Card, Container, Footer, Gradient, Subheading } from "@/components/ui";
+import { Navbar } from "@/components/layout";
+import { getCurrentUser } from "@/lib/auth/dal";
 
 const features = [
   {
@@ -16,7 +18,9 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const user = await getCurrentUser();
+
   return (
     <div className="flex min-h-dvh flex-col overflow-hidden">
       {/* Hero */}
@@ -36,10 +40,17 @@ export default function Home() {
               Manage faculty office assignments.
             </p>
             <div className="mt-12 flex flex-col gap-x-6 gap-y-4 sm:flex-row">
-              <PortalLink href="/admin">Admin Page</PortalLink>
-              <PortalLink href="/faculty" variant="secondary">
-                Faculty Page
-              </PortalLink>
+              {/* The buttons depend on who is signed in and their role. */}
+              {!user && <PortalLink href="/login">Log in</PortalLink>}
+              {user?.role === "ADMIN" && (
+                <>
+                  <PortalLink href="/admin">Admin Dashboard</PortalLink>
+                  <PortalLink href="/faculty" variant="secondary">
+                    Faculty Portal
+                  </PortalLink>
+                </>
+              )}
+              {user?.role === "FACULTY" && <PortalLink href="/faculty">My Office</PortalLink>}
             </div>
           </div>
         </Container>

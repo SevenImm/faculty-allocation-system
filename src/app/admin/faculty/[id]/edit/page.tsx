@@ -12,11 +12,12 @@ import {
   Field,
   FormCard,
   inputClass,
-  PageShell,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { logChange, describeChanges } from "@/lib/history";
 import { RANK_LABELS, TENURE_LABELS } from "@/lib/labels";
 
@@ -45,6 +46,7 @@ export default async function EditFacultyPage({
 
   async function saveFaculty(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const current = await db.orm.public.Faculty.where({ id }).first();
     if (!current) redirect("/admin");
