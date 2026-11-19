@@ -23,6 +23,7 @@ import {
   getRecommendedOffices,
 } from "@/lib/officeRecommendations";
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
 import {
@@ -30,9 +31,9 @@ import {
   ButtonLink,
   Field,
   FormCard,
-  PageShell,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 
 
 
@@ -113,6 +114,7 @@ export default async function AddAllocationPage({
 
   async function assignOffice(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const facultyId = Number(formData.get("facultyId"));
     const officeId = Number(formData.get("officeId"));

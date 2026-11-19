@@ -9,6 +9,7 @@
  */
 
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import { RANK_LABELS, TENURE_LABELS } from "@/lib/labels";
 import {
@@ -17,9 +18,9 @@ import {
   Field,
   FormCard,
   inputClass,
-  PageShell,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import { logChange } from "@/lib/history";
 
 export default async function AddFacultyPage() {
@@ -28,6 +29,7 @@ export default async function AddFacultyPage() {
 
   async function addFaculty(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     // Extract submitted form values.
     const firstName = formData.get("firstName") as string;

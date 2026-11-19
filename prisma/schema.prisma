@@ -81,6 +81,9 @@ model Faculty {
     department      Department   @relation(fields: [departmentId], references: [id])
 
     allocations     Allocation[]
+
+    // The login account for this faculty member, if one has been created.
+    user            User?
 }
 
 
@@ -155,4 +158,37 @@ model ChangeLog {
     entityId        Int?         // id of the record that changed, if any
     details         String       // what changed, e.g. "Window: No → Yes"
     createdAt       DateTime     @default(now())
+}
+
+// Who can sign in and what they are allowed to do.
+//
+// ADMIN   - full access to the admin pages (faculty, offices, assignments,
+//           imports, history and user accounts).
+// FACULTY - can sign in to the Faculty Portal and see their own office.
+enum UserRole {
+    ADMIN
+    FACULTY
+}
+
+
+// A login account.
+//
+// Passwords are never stored in plain text: passwordHash holds a salted
+// scrypt hash produced by src/lib/auth/password.ts.
+//
+// facultyId optionally links the account to a Faculty record so the
+// Faculty Portal can show that person's office. Admin accounts normally
+// leave it empty. If the faculty record is deleted the link is cleared
+// rather than deleting the account.
+model User {
+    id              Int          @id @default(autoincrement())
+    email           String       @unique
+    name            String
+    passwordHash    String
+    role            UserRole     @default(FACULTY)
+    createdAt       DateTime     @default(now())
+    updatedAt       DateTime     @updatedAt
+
+    facultyId       Int?         @unique
+    faculty         Faculty?     @relation(fields: [facultyId], references: [id], onDelete: SetNull)
 }

@@ -34,9 +34,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'40c54bb7d2824c97df286190bd40f3c28f3851ad18501bf59c9497ba4a637446'>;
+  StorageHashBase<'fbbb7b4e2525b73783201745d1c3b3951eb0079997eed86b3d38fe159371bc90'>;
 export type ExecutionHash =
-  ExecutionHashBase<'054547d13912f9cb5169884a5ef924eff3721ee50204c77a3159842081d3d269'>;
+  ExecutionHashBase<'a76de7e9e15bd12b64c12afaf54337f756884f2794693078935aafddc5ac296e'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -304,6 +304,16 @@ export type FieldOutputTypes = {
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
     };
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly passwordHash: CodecTypes['pg/text@1']['output'];
+      readonly role: 'ADMIN' | 'FACULTY';
+      readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    };
   };
 };
 export type FieldInputTypes = {
@@ -361,6 +371,16 @@ export type FieldInputTypes = {
       readonly roomNumber: CodecTypes['pg/text@1']['input'];
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
+    };
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly passwordHash: CodecTypes['pg/text@1']['input'];
+      readonly role: 'ADMIN' | 'FACULTY';
+      readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
     };
   };
 };
@@ -420,6 +440,16 @@ export type StorageColumnTypes = {
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
     };
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly email: CodecTypes['pg/text@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly passwordHash: CodecTypes['pg/text@1']['output'];
+      readonly role: 'ADMIN' | 'FACULTY';
+      readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    };
   };
 };
 export type StorageColumnInputTypes = {
@@ -478,6 +508,16 @@ export type StorageColumnInputTypes = {
       readonly spaceType: 'OFFICE' | 'CUBICLE';
       readonly status: 'AVAILABLE' | 'RESERVED' | 'UNAVAILABLE';
     };
+    readonly User: {
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly email: CodecTypes['pg/text@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly passwordHash: CodecTypes['pg/text@1']['input'];
+      readonly role: 'ADMIN' | 'FACULTY';
+      readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+    };
   };
 };
 
@@ -532,7 +572,8 @@ export namespace Models {
     updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
     allocations: public_Allocation[];
     department: public_Department;
-    readonly [RelationKeys]?: 'allocations' | 'department';
+    user: public_User | null;
+    readonly [RelationKeys]?: 'allocations' | 'department' | 'user';
   };
   export type public_Office = {
     building: CodecTypes['pg/text@1']['output'];
@@ -547,6 +588,18 @@ export namespace Models {
     allocations: public_Allocation[];
     readonly [RelationKeys]?: 'allocations';
   };
+  export type public_User = {
+    createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    email: CodecTypes['pg/text@1']['output'];
+    facultyId: CodecTypes['pg/int4@1']['output'] | null;
+    id: CodecTypes['pg/int4@1']['output'];
+    name: CodecTypes['pg/text@1']['output'];
+    passwordHash: CodecTypes['pg/text@1']['output'];
+    role: 'ADMIN' | 'FACULTY';
+    updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    faculty: public_Faculty | null;
+    readonly [RelationKeys]?: 'faculty';
+  };
 }
 
 export declare const models: {
@@ -556,6 +609,7 @@ export declare const models: {
     Department: Models.public_Department;
     Faculty: Models.public_Faculty;
     Office: Models.public_Office;
+    User: Models.public_User;
   };
 };
 
@@ -872,6 +926,90 @@ type ContractBase = Omit<
               indexes: readonly [];
               foreignKeys: readonly [];
             };
+            readonly User: {
+              columns: {
+                readonly createdAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly email: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly facultyId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly passwordHash: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly role: {
+                  readonly nativeType: 'UserRole';
+                  readonly codecId: 'pg/enum@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/enum@1', 'FACULTY'>;
+                  };
+                  readonly typeParams: { readonly typeName: 'UserRole' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'User_email_key';
+                  readonly columns: readonly ['email'];
+                  readonly unique: true;
+                },
+                {
+                  readonly name: 'User_facultyId_key';
+                  readonly columns: readonly ['facultyId'];
+                  readonly unique: true;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['facultyId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Faculty';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
           };
           readonly valueSet: {
             readonly FacultyRank: {
@@ -902,6 +1040,10 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['TENURED', 'TENURE_TRACK', 'FIXED_TERM'];
             };
+            readonly UserRole: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['ADMIN', 'FACULTY'];
+            };
           };
         };
       };
@@ -924,6 +1066,7 @@ type ContractBase = Omit<
     };
     readonly Faculty: { readonly namespace: 'public' & NamespaceId; readonly model: 'Faculty' };
     readonly Office: { readonly namespace: 'public' & NamespaceId; readonly model: 'Office' };
+    readonly User: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
   readonly domain: {
     readonly namespaces: {
@@ -1164,6 +1307,15 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly user: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: '1:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['facultyId'];
+                };
+              };
             };
             readonly storage: {
               readonly table: 'Faculty';
@@ -1258,6 +1410,82 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly User: {
+            readonly fields: {
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly email: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly facultyId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly passwordHash: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly role: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/enum@1';
+                  readonly typeParams: { readonly typeName: 'UserRole' };
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly faculty: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Faculty';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['facultyId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'User';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly email: { readonly column: 'email' };
+                readonly facultyId: { readonly column: 'facultyId' };
+                readonly id: { readonly column: 'id' };
+                readonly name: { readonly column: 'name' };
+                readonly passwordHash: { readonly column: 'passwordHash' };
+                readonly role: { readonly column: 'role' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
         };
       };
     };
@@ -1292,6 +1520,15 @@ type ContractBase = Omit<
           readonly onUpdate: { readonly id: 'plainDateTimeNow'; readonly kind: 'generator' };
           readonly ref: {
             readonly entry: 'Faculty';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'plainDateTimeNow'; readonly kind: 'generator' };
+          readonly onUpdate: { readonly id: 'plainDateTimeNow'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'User';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };
