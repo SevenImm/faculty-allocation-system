@@ -14,6 +14,7 @@
 
 import { Temporal } from "temporal-polyfill";
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
 import {
@@ -21,9 +22,9 @@ import {
   ButtonLink,
   Card,
   EmptyState,
-  PageShell,
   SectionHeading,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 
 export default async function AllocationsPage() {
   const faculty = await db.orm.public.Faculty.all();
@@ -37,6 +38,7 @@ export default async function AllocationsPage() {
 
   async function deallocateOffice(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const allocationId = Number(formData.get("allocationId"));
 

@@ -1,4 +1,5 @@
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import {
   Button,
@@ -6,9 +7,9 @@ import {
   Field,
   FormCard,
   inputClass,
-  PageShell,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 
 const buildings = [
   "AIC", "ANX", "BLK", "CHS", "CNS", "CWT", "ECHS", "FPA", "H", "KCB", "KLM",
@@ -19,6 +20,7 @@ import { logChange } from "@/lib/history";
 export default function AddOfficePage() {
   async function addOffice(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const building = formData.get("building") as string;
     const roomNumber = formData.get("roomNumber") as string;

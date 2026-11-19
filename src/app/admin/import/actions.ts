@@ -7,12 +7,15 @@
 
 import { parseSpreadsheet, importSpreadsheet, type ImportReport } from "@/lib/spreadsheet";
 import { logChange } from "@/lib/history";
+import { requireAdmin } from "@/lib/auth/dal";
 
 export type ImportResult =
   | { ok: true; report: ImportReport }
   | { ok: false; error: string };
 
 async function run(formData: FormData, apply: boolean): Promise<ImportResult> {
+  await requireAdmin();
+
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     return { ok: false, error: "Please choose an .xlsx file first." };

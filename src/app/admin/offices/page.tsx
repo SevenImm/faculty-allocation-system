@@ -10,6 +10,7 @@
  */
 
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import { logChange } from "@/lib/history";
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
@@ -21,10 +22,10 @@ import {
   Card,
   EmptyState,
   inputClass,
-  PageShell,
   SectionHeading,
   selectClass,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 
 const statusTone = {
   AVAILABLE: "green",
@@ -87,6 +88,7 @@ export default async function OfficesPage({
 
   async function updateOfficeStatus(formData: FormData) {
   "use server";
+  await requireAdmin();
 
   const officeId = Number(formData.get("officeId"));
 
@@ -118,6 +120,7 @@ export default async function OfficesPage({
   // Runs on the server when a "Delete Office" button is pressed.
   async function deleteOffice(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const officeId = Number(formData.get("officeId"));
     const office = await db.orm.public.Office.where({ id: officeId }).first();

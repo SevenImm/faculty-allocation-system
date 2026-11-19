@@ -8,7 +8,8 @@
  * Existing records are never duplicated or overwritten.
  */
 
-import { ButtonLink, PageShell } from "@/components/ui";
+import { ButtonLink } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import ImportForm from "./ImportForm";
 
 export default function ImportPage() {

@@ -15,6 +15,7 @@
  */
 
 import { db } from "@/prisma/db";
+import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
 import ConfirmDeleteButton from "@/components/ConfirmDeleteButton";
 import { RANK_LABELS, TENURE_LABELS } from "@/lib/labels";
@@ -26,11 +27,11 @@ import {
   EmptyState,
   inputClass,
   outlineButtonClass,
-  PageShell,
   SectionHeading,
   selectClass,
   StatCard,
 } from "@/components/ui";
+import { PageShell } from "@/components/layout";
 import { logChange } from "@/lib/history";
 
 
@@ -58,6 +59,7 @@ export default async function AdminPage({
   // Runs on the server when a "Delete Faculty" button is pressed.
   async function deleteFaculty(formData: FormData) {
     "use server";
+    await requireAdmin();
 
     const facultyId = Number(formData.get("facultyId"));
     const member = await db.orm.public.Faculty.where({ id: facultyId }).first();
