@@ -7,18 +7,34 @@
  */
 
 import { db } from "@/prisma/db";
+import { getCurrentUser } from "@/lib/auth/dal";
 
+type Actor = { id: number; name: string; email: string; role: string };
+
+/**
+ * Record a change. The signed-in user is saved as the person who made it.
+ * Pass `actor` only when nobody is signed in yet but we know who acted
+ * (e.g. a faculty member activating their own account).
+ */
 export async function logChange(entry: {
   action: string;
-  entity: "Faculty" | "Office" | "Allocation" | "Import" | "User";
+  entity: "Faculty" | "Office" | "Allocation" | "Import" | "User" | "Request";
   entityId?: number | null;
   details: string;
+  actor?: Actor | null;
 }) {
+  // Outside a web request (e.g. the import script) there is no session.
+  const actor = entry.actor ?? (await getCurrentUser().catch(() => null));
+
   await db.orm.public.ChangeLog.create({
     action: entry.action,
     entity: entry.entity,
     entityId: entry.entityId ?? null,
     details: entry.details,
+    actorId: actor?.id ?? null,
+    actorName: actor?.name ?? null,
+    actorEmail: actor?.email ?? null,
+    actorRole: actor?.role ?? null,
   });
 }
 

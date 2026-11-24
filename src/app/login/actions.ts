@@ -88,6 +88,7 @@ export async function setupFirstAdmin(
     entity: "User",
     entityId: user.id,
     details: `${name} (${email})`,
+    actor: user,
   });
 
   await createSession(user.id, user.role);

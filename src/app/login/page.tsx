@@ -11,6 +11,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { db } from "@/prisma/db";
 import { getCurrentUser } from "@/lib/auth/dal";
@@ -57,6 +58,12 @@ export default async function LoginPage({
         description="Administrators manage the whole system; faculty members see their own office."
       >
         <LoginForm next={next} />
+        <p className="mt-6 text-center text-sm/6 text-gray-600">
+          Faculty member using the portal for the first time?{" "}
+          <Link href="/activate" className="font-medium text-maroon hover:underline">
+            Activate your account
+          </Link>
+        </p>
       </FormCard>
     </PageShell>
   );

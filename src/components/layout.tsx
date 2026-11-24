@@ -29,8 +29,9 @@ const adminLinks = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/offices", label: "Offices" },
   { href: "/admin/allocations", label: "Allocations" },
+  { href: "/admin/requests", label: "Requests" },
   { href: "/admin/history", label: "History" },
-  { href: "/admin/users", label: "Users" },
+  { href: "/admin/accounts", label: "Accounts" },
   { href: "/faculty", label: "Faculty Portal" },
 ];
 
@@ -56,14 +57,20 @@ function AccountControls({ user }: { user: CurrentUser | null }) {
 
   return (
     <div className="flex items-center gap-3 px-4 py-3">
-      <span className="hidden text-sm/6 font-medium text-gray-950 sm:block">{user.name}</span>
+      <span className="hidden text-sm/6 font-medium whitespace-nowrap text-gray-950 xl:block">{user.name}</span>
       <Badge tone={user.role === "ADMIN" ? "maroon" : "gold"}>
         {user.role === "ADMIN" ? "Admin" : "Faculty"}
       </Badge>
+      <Link
+        href="/account/password"
+        className="text-sm/6 font-medium whitespace-nowrap text-gray-950/70 hover:text-maroon"
+      >
+        Password
+      </Link>
       <form action={logout}>
         <button
           type="submit"
-          className="text-sm/6 font-medium text-gray-950/70 hover:text-maroon"
+          className="text-sm/6 font-medium whitespace-nowrap text-gray-950/70 hover:text-maroon"
         >
           Log out
         </button>
@@ -86,12 +93,12 @@ export async function Navbar() {
         </PlusGridItem>
 
         {/* Desktop links */}
-        <nav className="relative hidden lg:flex">
+        <nav className="relative hidden xl:flex">
           {links.map(({ href, label }) => (
             <PlusGridItem key={href} className="relative flex">
               <Link
                 href={href}
-                className="flex items-center px-4 py-3 text-base font-medium text-gray-950 bg-blend-multiply hover:bg-black/2.5"
+                className="flex items-center px-3 py-3 text-base font-medium whitespace-nowrap text-gray-950 bg-blend-multiply hover:bg-black/2.5 xl:px-4"
               >
                 {label}
               </Link>
@@ -103,7 +110,7 @@ export async function Navbar() {
         </nav>
 
         {/* Mobile menu: native <details>, so no client JavaScript needed */}
-        <details className="group relative self-center lg:hidden">
+        <details className="group relative self-center xl:hidden">
           <summary
             aria-label="Open main menu"
             className="flex size-12 cursor-pointer list-none items-center justify-center rounded-lg hover:bg-black/5 [&::-webkit-details-marker]:hidden"
@@ -133,7 +140,13 @@ export async function Navbar() {
                   <p className="text-xs/5 text-gray-500">
                     {user.role === "ADMIN" ? "Administrator" : "Faculty"}
                   </p>
-                  <form action={logout} className="mt-2">
+                  <Link
+                    href="/account/password"
+                    className="mt-2 block text-sm/6 font-medium text-gray-950/70"
+                  >
+                    Change password
+                  </Link>
+                  <form action={logout} className="mt-1">
                     <button type="submit" className="text-sm/6 font-medium text-maroon">
                       Log out
                     </button>

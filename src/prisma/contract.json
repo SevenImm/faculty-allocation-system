@@ -4,6 +4,10 @@
   "target": "postgres",
   "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
   "roots": {
+    "ActivationCode": {
+      "model": "ActivationCode",
+      "namespace": "public"
+    },
     "Allocation": {
       "model": "Allocation",
       "namespace": "public"
@@ -20,6 +24,10 @@
       "model": "Faculty",
       "namespace": "public"
     },
+    "FacultyRequest": {
+      "model": "FacultyRequest",
+      "namespace": "public"
+    },
     "Office": {
       "model": "Office",
       "namespace": "public"
@@ -33,6 +41,90 @@
     "namespaces": {
       "public": {
         "models": {
+          "ActivationCode": {
+            "fields": {
+              "code": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "facultyId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "faculty": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "facultyId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Faculty",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "code": {
+                  "column": "code"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "facultyId": {
+                  "column": "facultyId"
+                },
+                "id": {
+                  "column": "id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ActivationCode"
+            }
+          },
           "Allocation": {
             "fields": {
               "assignedAt": {
@@ -142,6 +234,34 @@
                   "kind": "scalar"
                 }
               },
+              "actorEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "actorId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "actorName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "actorRole": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -186,6 +306,18 @@
               "fields": {
                 "action": {
                   "column": "action"
+                },
+                "actorEmail": {
+                  "column": "actorEmail"
+                },
+                "actorId": {
+                  "column": "actorId"
+                },
+                "actorName": {
+                  "column": "actorName"
+                },
+                "actorRole": {
+                  "column": "actorRole"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -350,6 +482,22 @@
               }
             },
             "relations": {
+              "activationCode": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "facultyId"
+                  ]
+                },
+                "to": {
+                  "model": "ActivationCode",
+                  "namespace": "public"
+                }
+              },
               "allocations": {
                 "cardinality": "1:N",
                 "on": {
@@ -378,6 +526,21 @@
                 },
                 "to": {
                   "model": "Department",
+                  "namespace": "public"
+                }
+              },
+              "requests": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "facultyId"
+                  ]
+                },
+                "to": {
+                  "model": "FacultyRequest",
                   "namespace": "public"
                 }
               },
@@ -433,6 +596,146 @@
               },
               "namespaceId": "public",
               "table": "Faculty"
+            }
+          },
+          "FacultyRequest": {
+            "fields": {
+              "adminNote": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "facultyId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "resolvedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "seenByFaculty": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/enum@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "typeName": "RequestStatus"
+                  }
+                }
+              },
+              "topic": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/enum@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "typeName": "RequestType"
+                  }
+                }
+              }
+            },
+            "relations": {
+              "faculty": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "facultyId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Faculty",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "adminNote": {
+                  "column": "adminNote"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "facultyId": {
+                  "column": "facultyId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "resolvedAt": {
+                  "column": "resolvedAt"
+                },
+                "seenByFaculty": {
+                  "column": "seenByFaculty"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "topic": {
+                  "column": "topic"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "FacultyRequest"
             }
           },
           "Office": {
@@ -710,6 +1013,22 @@
               ],
               "typeName": "OfficeStatus"
             },
+            "RequestStatus": {
+              "kind": "postgres-enum",
+              "members": [
+                "OPEN",
+                "RESOLVED"
+              ],
+              "typeName": "RequestStatus"
+            },
+            "RequestType": {
+              "kind": "postgres-enum",
+              "members": [
+                "CORRECTION",
+                "OFFICE_ISSUE"
+              ],
+              "typeName": "RequestType"
+            },
             "SpaceType": {
               "kind": "postgres-enum",
               "members": [
@@ -737,6 +1056,91 @@
             }
           },
           "table": {
+            "ActivationCode": {
+              "columns": {
+                "code": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "facultyId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": [
+                      "facultyId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "ActivationCode"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Faculty"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "code"
+                  ],
+                  "name": "ActivationCode_code_key",
+                  "unique": true
+                },
+                {
+                  "columns": [
+                    "facultyId"
+                  ],
+                  "name": "ActivationCode_facultyId_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Allocation": {
               "columns": {
                 "assignedAt": {
@@ -831,6 +1235,26 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "actorEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "actorId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "actorName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "actorRole": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamp-temporal@1",
@@ -1031,6 +1455,127 @@
                   "unique": true
                 }
               ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "FacultyRequest": {
+              "columns": {
+                "adminNote": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "facultyId": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "resolvedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "seenByFaculty": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": true
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/enum@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "OPEN"
+                  },
+                  "nativeType": "RequestStatus",
+                  "nullable": false,
+                  "typeParams": {
+                    "typeName": "RequestStatus"
+                  },
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RequestStatus",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "topic": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/enum@1",
+                  "nativeType": "RequestType",
+                  "nullable": false,
+                  "typeParams": {
+                    "typeName": "RequestType"
+                  },
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "RequestType",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": [
+                      "facultyId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "FacultyRequest"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "Faculty"
+                  }
+                }
+              ],
+              "indexes": [],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -1264,6 +1809,20 @@
                 "UNAVAILABLE"
               ]
             },
+            "RequestStatus": {
+              "kind": "valueSet",
+              "values": [
+                "OPEN",
+                "RESOLVED"
+              ]
+            },
+            "RequestType": {
+              "kind": "valueSet",
+              "values": [
+                "CORRECTION",
+                "OFFICE_ISSUE"
+              ]
+            },
             "SpaceType": {
               "kind": "valueSet",
               "values": [
@@ -1292,7 +1851,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "fbbb7b4e2525b73783201745d1c3b3951eb0079997eed86b3d38fe159371bc90"
+    "storageHash": "db9cefd46be6051c3f71d32c935e70beeb129a21ce17fb384dc5b2e86bddca63"
   },
   "execution": {
     "executionHash": "a76de7e9e15bd12b64c12afaf54337f756884f2794693078935aafddc5ac296e",

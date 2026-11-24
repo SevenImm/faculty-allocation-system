@@ -43,6 +43,7 @@ export default async function HistoryPage() {
               <thead className="bg-gray-50 font-mono text-xs/5 font-semibold tracking-widest text-gray-500 uppercase">
                 <tr>
                   <th className="px-6 py-3">When</th>
+                  <th className="px-6 py-3">Who</th>
                   <th className="px-6 py-3">Action</th>
                   <th className="px-6 py-3">Details</th>
                 </tr>
@@ -52,6 +53,21 @@ export default async function HistoryPage() {
                   <tr key={entry.id} className="align-top hover:bg-gray-50/60">
                     <td className="px-6 py-4 font-mono text-xs/6 whitespace-nowrap text-gray-500">
                       {when(entry.createdAt)}
+                    </td>
+                    <td className="px-6 py-4">
+                      {entry.actorName ? (
+                        <>
+                          <p className="font-medium whitespace-nowrap text-gray-950">
+                            {entry.actorName}
+                            {entry.actorRole === "FACULTY" && (
+                              <span className="ml-2 text-xs/5 font-normal text-gray-500">Faculty</span>
+                            )}
+                          </p>
+                          <p className="text-xs/5 text-gray-500">{entry.actorEmail}</p>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">System</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge tone={entry.action.startsWith("Deleted") ? "maroon" : "gold"}>

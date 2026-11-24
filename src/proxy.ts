@@ -31,7 +31,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  if (pathname.startsWith("/faculty") && !session) {
+  if ((pathname.startsWith("/faculty") || pathname.startsWith("/account")) && !session) {
     return toLogin();
   }
 
@@ -43,5 +43,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/faculty/:path*", "/login"],
+  matcher: ["/admin/:path*", "/faculty/:path*", "/account/:path*", "/login"],
 };
