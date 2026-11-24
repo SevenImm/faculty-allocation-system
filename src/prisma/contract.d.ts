@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'fbbb7b4e2525b73783201745d1c3b3951eb0079997eed86b3d38fe159371bc90'>;
+  StorageHashBase<'db9cefd46be6051c3f71d32c935e70beeb129a21ce17fb384dc5b2e86bddca63'>;
 export type ExecutionHash =
   ExecutionHashBase<'a76de7e9e15bd12b64c12afaf54337f756884f2794693078935aafddc5ac296e'>;
 export type ProfileHash =
@@ -250,6 +250,13 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
+    readonly ActivationCode: {
+      readonly code: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Allocation: {
       readonly assignedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly endedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
@@ -259,6 +266,10 @@ export type FieldOutputTypes = {
     };
     readonly ChangeLog: {
       readonly action: CodecTypes['pg/text@1']['output'];
+      readonly actorEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly actorId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly actorName: CodecTypes['pg/text@1']['output'] | null;
+      readonly actorRole: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly details: CodecTypes['pg/text@1']['output'];
       readonly entity: CodecTypes['pg/text@1']['output'];
@@ -292,6 +303,18 @@ export type FieldOutputTypes = {
       readonly otherNotes: CodecTypes['pg/text@1']['output'] | null;
       readonly tenureStatus: 'TENURED' | 'TENURE_TRACK' | 'FIXED_TERM';
       readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    };
+    readonly FacultyRequest: {
+      readonly adminNote: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly resolvedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
+      readonly seenByFaculty: CodecTypes['pg/bool@1']['output'];
+      readonly status: 'OPEN' | 'RESOLVED';
+      readonly topic: CodecTypes['pg/text@1']['output'];
+      readonly type: 'CORRECTION' | 'OFFICE_ISSUE';
     };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['output'];
@@ -318,6 +341,13 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
+    readonly ActivationCode: {
+      readonly code: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+    };
     readonly Allocation: {
       readonly assignedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly endedAt: CodecTypes['pg/timestamp-temporal@1']['input'] | null;
@@ -327,6 +357,10 @@ export type FieldInputTypes = {
     };
     readonly ChangeLog: {
       readonly action: CodecTypes['pg/text@1']['input'];
+      readonly actorEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly actorId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly actorName: CodecTypes['pg/text@1']['input'] | null;
+      readonly actorRole: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly details: CodecTypes['pg/text@1']['input'];
       readonly entity: CodecTypes['pg/text@1']['input'];
@@ -361,6 +395,18 @@ export type FieldInputTypes = {
       readonly tenureStatus: 'TENURED' | 'TENURE_TRACK' | 'FIXED_TERM';
       readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
     };
+    readonly FacultyRequest: {
+      readonly adminNote: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly resolvedAt: CodecTypes['pg/timestamp-temporal@1']['input'] | null;
+      readonly seenByFaculty: CodecTypes['pg/bool@1']['input'];
+      readonly status: 'OPEN' | 'RESOLVED';
+      readonly topic: CodecTypes['pg/text@1']['input'];
+      readonly type: 'CORRECTION' | 'OFFICE_ISSUE';
+    };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['input'];
       readonly capacity: CodecTypes['pg/int4@1']['input'];
@@ -386,6 +432,13 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
+    readonly ActivationCode: {
+      readonly code: CodecTypes['pg/text@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly expiresAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+    };
     readonly Allocation: {
       readonly assignedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly endedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
@@ -395,6 +448,10 @@ export type StorageColumnTypes = {
     };
     readonly ChangeLog: {
       readonly action: CodecTypes['pg/text@1']['output'];
+      readonly actorEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly actorId: CodecTypes['pg/int4@1']['output'] | null;
+      readonly actorName: CodecTypes['pg/text@1']['output'] | null;
+      readonly actorRole: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
       readonly details: CodecTypes['pg/text@1']['output'];
       readonly entity: CodecTypes['pg/text@1']['output'];
@@ -429,6 +486,18 @@ export type StorageColumnTypes = {
       readonly tenureStatus: 'TENURED' | 'TENURE_TRACK' | 'FIXED_TERM';
       readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
     };
+    readonly FacultyRequest: {
+      readonly adminNote: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+      readonly facultyId: CodecTypes['pg/int4@1']['output'];
+      readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly message: CodecTypes['pg/text@1']['output'];
+      readonly resolvedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
+      readonly seenByFaculty: CodecTypes['pg/bool@1']['output'];
+      readonly status: 'OPEN' | 'RESOLVED';
+      readonly topic: CodecTypes['pg/text@1']['output'];
+      readonly type: 'CORRECTION' | 'OFFICE_ISSUE';
+    };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['output'];
       readonly capacity: CodecTypes['pg/int4@1']['output'];
@@ -454,6 +523,13 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
+    readonly ActivationCode: {
+      readonly code: CodecTypes['pg/text@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly expiresAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+    };
     readonly Allocation: {
       readonly assignedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly endedAt: CodecTypes['pg/timestamp-temporal@1']['input'] | null;
@@ -463,6 +539,10 @@ export type StorageColumnInputTypes = {
     };
     readonly ChangeLog: {
       readonly action: CodecTypes['pg/text@1']['input'];
+      readonly actorEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly actorId: CodecTypes['pg/int4@1']['input'] | null;
+      readonly actorName: CodecTypes['pg/text@1']['input'] | null;
+      readonly actorRole: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
       readonly details: CodecTypes['pg/text@1']['input'];
       readonly entity: CodecTypes['pg/text@1']['input'];
@@ -497,6 +577,18 @@ export type StorageColumnInputTypes = {
       readonly tenureStatus: 'TENURED' | 'TENURE_TRACK' | 'FIXED_TERM';
       readonly updatedAt: CodecTypes['pg/timestamp-temporal@1']['input'];
     };
+    readonly FacultyRequest: {
+      readonly adminNote: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamp-temporal@1']['input'];
+      readonly facultyId: CodecTypes['pg/int4@1']['input'];
+      readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly message: CodecTypes['pg/text@1']['input'];
+      readonly resolvedAt: CodecTypes['pg/timestamp-temporal@1']['input'] | null;
+      readonly seenByFaculty: CodecTypes['pg/bool@1']['input'];
+      readonly status: 'OPEN' | 'RESOLVED';
+      readonly topic: CodecTypes['pg/text@1']['input'];
+      readonly type: 'CORRECTION' | 'OFFICE_ISSUE';
+    };
     readonly Office: {
       readonly building: CodecTypes['pg/text@1']['input'];
       readonly capacity: CodecTypes['pg/int4@1']['input'];
@@ -522,6 +614,15 @@ export type StorageColumnInputTypes = {
 };
 
 export namespace Models {
+  export type public_ActivationCode = {
+    code: CodecTypes['pg/text@1']['output'];
+    createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    expiresAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    facultyId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    faculty: public_Faculty;
+    readonly [RelationKeys]?: 'faculty';
+  };
   export type public_Allocation = {
     assignedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
     endedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
@@ -534,6 +635,10 @@ export namespace Models {
   };
   export type public_ChangeLog = {
     action: CodecTypes['pg/text@1']['output'];
+    actorEmail: CodecTypes['pg/text@1']['output'] | null;
+    actorId: CodecTypes['pg/int4@1']['output'] | null;
+    actorName: CodecTypes['pg/text@1']['output'] | null;
+    actorRole: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
     details: CodecTypes['pg/text@1']['output'];
     entity: CodecTypes['pg/text@1']['output'];
@@ -570,10 +675,26 @@ export namespace Models {
     otherNotes: CodecTypes['pg/text@1']['output'] | null;
     tenureStatus: 'TENURED' | 'TENURE_TRACK' | 'FIXED_TERM';
     updatedAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    activationCode: public_ActivationCode | null;
     allocations: public_Allocation[];
     department: public_Department;
+    requests: public_FacultyRequest[];
     user: public_User | null;
-    readonly [RelationKeys]?: 'allocations' | 'department' | 'user';
+    readonly [RelationKeys]?: 'activationCode' | 'allocations' | 'department' | 'requests' | 'user';
+  };
+  export type public_FacultyRequest = {
+    adminNote: CodecTypes['pg/text@1']['output'] | null;
+    createdAt: CodecTypes['pg/timestamp-temporal@1']['output'];
+    facultyId: CodecTypes['pg/int4@1']['output'];
+    id: CodecTypes['pg/int4@1']['output'];
+    message: CodecTypes['pg/text@1']['output'];
+    resolvedAt: CodecTypes['pg/timestamp-temporal@1']['output'] | null;
+    seenByFaculty: CodecTypes['pg/bool@1']['output'];
+    status: 'OPEN' | 'RESOLVED';
+    topic: CodecTypes['pg/text@1']['output'];
+    type: 'CORRECTION' | 'OFFICE_ISSUE';
+    faculty: public_Faculty;
+    readonly [RelationKeys]?: 'faculty';
   };
   export type public_Office = {
     building: CodecTypes['pg/text@1']['output'];
@@ -604,10 +725,12 @@ export namespace Models {
 
 export declare const models: {
   public: {
+    ActivationCode: Models.public_ActivationCode;
     Allocation: Models.public_Allocation;
     ChangeLog: Models.public_ChangeLog;
     Department: Models.public_Department;
     Faculty: Models.public_Faculty;
+    FacultyRequest: Models.public_FacultyRequest;
     Office: Models.public_Office;
     User: Models.public_User;
   };
@@ -631,6 +754,70 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly ActivationCode: {
+              columns: {
+                readonly code: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly expiresAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly facultyId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'ActivationCode_code_key';
+                  readonly columns: readonly ['code'];
+                  readonly unique: true;
+                },
+                {
+                  readonly name: 'ActivationCode_facultyId_key';
+                  readonly columns: readonly ['facultyId'];
+                  readonly unique: true;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'ActivationCode';
+                    readonly columns: readonly ['facultyId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Faculty';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly Allocation: {
               columns: {
                 readonly assignedAt: {
@@ -702,6 +889,26 @@ type ContractBase = Omit<
                   readonly nativeType: 'text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                };
+                readonly actorEmail: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly actorId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly actorName: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly actorRole: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                 };
                 readonly createdAt: {
                   readonly nativeType: 'timestamp';
@@ -854,6 +1061,94 @@ type ContractBase = Omit<
                   readonly target: {
                     readonly namespaceId: 'public' & NamespaceId;
                     readonly tableName: 'Department';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly FacultyRequest: {
+              columns: {
+                readonly adminNote: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly facultyId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly id: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'function';
+                    readonly expression: 'autoincrement()';
+                  };
+                };
+                readonly message: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly resolvedAt: {
+                  readonly nativeType: 'timestamp';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 3 };
+                };
+                readonly seenByFaculty: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', true>;
+                  };
+                };
+                readonly status: {
+                  readonly nativeType: 'RequestStatus';
+                  readonly codecId: 'pg/enum@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/enum@1', 'OPEN'>;
+                  };
+                  readonly typeParams: { readonly typeName: 'RequestStatus' };
+                };
+                readonly topic: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly type: {
+                  readonly nativeType: 'RequestType';
+                  readonly codecId: 'pg/enum@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly typeName: 'RequestType' };
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FacultyRequest';
+                    readonly columns: readonly ['facultyId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'Faculty';
                     readonly columns: readonly ['id'];
                   };
                 },
@@ -1032,6 +1327,14 @@ type ContractBase = Omit<
               readonly kind: 'valueSet';
               readonly values: readonly ['AVAILABLE', 'RESERVED', 'UNAVAILABLE'];
             };
+            readonly RequestStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['OPEN', 'RESOLVED'];
+            };
+            readonly RequestType: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['CORRECTION', 'OFFICE_ISSUE'];
+            };
             readonly SpaceType: {
               readonly kind: 'valueSet';
               readonly values: readonly ['OFFICE', 'CUBICLE'];
@@ -1055,6 +1358,10 @@ type ContractBase = Omit<
   readonly target: 'postgres';
   readonly targetFamily: 'sql';
   readonly roots: {
+    readonly ActivationCode: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ActivationCode';
+    };
     readonly Allocation: {
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'Allocation';
@@ -1065,6 +1372,10 @@ type ContractBase = Omit<
       readonly model: 'Department';
     };
     readonly Faculty: { readonly namespace: 'public' & NamespaceId; readonly model: 'Faculty' };
+    readonly FacultyRequest: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'FacultyRequest';
+    };
     readonly Office: { readonly namespace: 'public' & NamespaceId; readonly model: 'Office' };
     readonly User: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
   };
@@ -1072,6 +1383,63 @@ type ContractBase = Omit<
     readonly namespaces: {
       readonly public: {
         readonly models: {
+          readonly ActivationCode: {
+            readonly fields: {
+              readonly code: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly expiresAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly facultyId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+            };
+            readonly relations: {
+              readonly faculty: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Faculty';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['facultyId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'ActivationCode';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly code: { readonly column: 'code' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly expiresAt: { readonly column: 'expiresAt' };
+                readonly facultyId: { readonly column: 'facultyId' };
+                readonly id: { readonly column: 'id' };
+              };
+            };
+          };
           readonly Allocation: {
             readonly fields: {
               readonly assignedAt: {
@@ -1147,6 +1515,22 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly actorEmail: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly actorId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly actorName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly actorRole: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -1178,6 +1562,10 @@ type ContractBase = Omit<
               readonly namespaceId: 'public';
               readonly fields: {
                 readonly action: { readonly column: 'action' };
+                readonly actorEmail: { readonly column: 'actorEmail' };
+                readonly actorId: { readonly column: 'actorId' };
+                readonly actorName: { readonly column: 'actorName' };
+                readonly actorRole: { readonly column: 'actorRole' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly details: { readonly column: 'details' };
                 readonly entity: { readonly column: 'entity' };
@@ -1284,6 +1672,18 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly activationCode: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'ActivationCode';
+                };
+                readonly cardinality: '1:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['facultyId'];
+                };
+              };
               readonly allocations: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -1305,6 +1705,17 @@ type ContractBase = Omit<
                 readonly on: {
                   readonly localFields: readonly ['departmentId'];
                   readonly targetFields: readonly ['id'];
+                };
+              };
+              readonly requests: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FacultyRequest';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['facultyId'];
                 };
               };
               readonly user: {
@@ -1331,6 +1742,96 @@ type ContractBase = Omit<
                 readonly otherNotes: { readonly column: 'otherNotes' };
                 readonly tenureStatus: { readonly column: 'tenureStatus' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly FacultyRequest: {
+            readonly fields: {
+              readonly adminNote: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly facultyId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly message: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly resolvedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamp-temporal@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly seenByFaculty: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/enum@1';
+                  readonly typeParams: { readonly typeName: 'RequestStatus' };
+                };
+              };
+              readonly topic: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly type: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/enum@1';
+                  readonly typeParams: { readonly typeName: 'RequestType' };
+                };
+              };
+            };
+            readonly relations: {
+              readonly faculty: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Faculty';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['facultyId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'FacultyRequest';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly adminNote: { readonly column: 'adminNote' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly facultyId: { readonly column: 'facultyId' };
+                readonly id: { readonly column: 'id' };
+                readonly message: { readonly column: 'message' };
+                readonly resolvedAt: { readonly column: 'resolvedAt' };
+                readonly seenByFaculty: { readonly column: 'seenByFaculty' };
+                readonly status: { readonly column: 'status' };
+                readonly topic: { readonly column: 'topic' };
+                readonly type: { readonly column: 'type' };
               };
             };
           };

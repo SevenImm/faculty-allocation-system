@@ -9,6 +9,7 @@
  * in the system.
  */
 
+import { buildingName } from "@/lib/buildings";
 import { db } from "@/prisma/db";
 import { requireAdmin } from "@/lib/auth/dal";
 import { redirect } from "next/navigation";
@@ -53,7 +54,7 @@ export default async function OfficesPage({
     // Search by building name.
     if (
       filters.building &&
-      !office.building
+      !`${office.building} ${buildingName(office.building) ?? ""}`
         .toLowerCase()
         .includes(filters.building.trim().toLowerCase())
     ) {
@@ -241,6 +242,9 @@ export default async function OfficesPage({
                   <p className="text-xl font-medium tracking-tight text-gray-950">
                     {office.building} {office.roomNumber}
                   </p>
+                  {buildingName(office.building) && (
+                    <p className="text-sm/5 text-gray-700">{buildingName(office.building)}</p>
+                  )}
                   <p className="text-sm/6 text-gray-500">
                     {SPACE_LABELS[office.spaceType] ?? office.spaceType}
                   </p>

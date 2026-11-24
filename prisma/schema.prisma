@@ -84,6 +84,13 @@ model Faculty {
 
     // The login account for this faculty member, if one has been created.
     user            User?
+
+    // Corrections and office problems this member reported from the Faculty Portal.
+    requests        FacultyRequest[]
+
+    // A one-time code the administrator gives this member so they can
+    // create their own login account at /activate.
+    activationCode  ActivationCode?
 }
 
 
@@ -157,6 +164,14 @@ model ChangeLog {
     entity          String       // "Faculty", "Office", "Allocation" or "Import"
     entityId        Int?         // id of the record that changed, if any
     details         String       // what changed, e.g. "Window: No → Yes"
+
+    // Who made the change. The name and email are copied at the time of
+    // the change, so the history still shows them if the account is later
+    // deleted or renamed. Empty for changes made by scripts.
+    actorId         Int?
+    actorName       String?
+    actorEmail      String?
+    actorRole       String?
     createdAt       DateTime     @default(now())
 }
 
@@ -191,4 +206,60 @@ model User {
 
     facultyId       Int?         @unique
     faculty         Faculty?     @relation(fields: [facultyId], references: [id], onDelete: SetNull)
+}
+
+
+// What a faculty member is reporting from the Faculty Portal.
+//
+// CORRECTION   - some of their information looks wrong (rank, email, office...).
+// OFFICE_ISSUE - a problem with their office (keys, furniture, maintenance...).
+enum RequestType {
+    CORRECTION
+    OFFICE_ISSUE
+}
+
+enum RequestStatus {
+    OPEN
+    RESOLVED
+}
+
+
+// A message sent from the Faculty Portal to the COAS administrators.
+//
+// Faculty can only create requests and see their own; administrators see
+// all of them on /admin/requests and mark them resolved. Requests never
+// change data by themselves: an administrator reviews them and makes any
+// change through the normal admin pages.
+model FacultyRequest {
+    id              Int            @id @default(autoincrement())
+    type            RequestType
+    topic           String         // e.g. "Rank", "Email", "Office", "Keys"
+    message         String
+    status          RequestStatus  @default(OPEN)
+    adminNote       String?        // optional reply shown to the faculty member
+    seenByFaculty   Boolean        @default(true) // false = resolved, the member has not seen the answer yet
+    createdAt       DateTime       @default(now())
+    resolvedAt      DateTime?
+
+    facultyId       Int
+    faculty         Faculty        @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+}
+
+
+// One-time activation code for a faculty member.
+//
+// Instead of the administrator creating every account by hand, they
+// generate a code on /admin/accounts and give it to the faculty member.
+// The member opens /activate, enters the code, their email and a password
+// of their choice, and the account is created and linked to their faculty
+// record. The code is deleted as soon as it is used, and stops working
+// after expiresAt.
+model ActivationCode {
+    id              Int          @id @default(autoincrement())
+    code            String       @unique   // e.g. "K7MQ4XTP" (shown as K7MQ-4XTP)
+    createdAt       DateTime     @default(now())
+    expiresAt       DateTime
+
+    facultyId       Int          @unique
+    faculty         Faculty      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
 }
